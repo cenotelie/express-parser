@@ -1,0 +1,30 @@
+﻿grammar Express {
+	options {
+		Axiom = "root";
+		Separator = "SEPARATOR";
+	}
+	terminals {
+		NEW_LINE -> U+000D /* CR */
+					|  U+000A /* LF */
+					|  U+000D U+000A /* CR LF */
+					|  U+0085 // Next line character
+					|  U+2028 // Line separator character
+					|  U+2029; //Paragraph separator character (U+2029)
+		WHITE_SPACE -> U+0020 | U+0009 | U+000B | U+000C;
+		SEPARATOR   -> (WHITE_SPACE | NEW_LINE)+;
+		IDENTIFIER	-> [a-zA-Z_][a-zA-Z_]*;
+		ANNOTATION	-> '(*' (.* - (.* '*)' .*)) '*)';
+	}
+	rules {
+		att_decl	-> IDENTIFIER ':'! 'OPTIONAL' 'STRING' ';'! @OnAttribute; //FIXME: Unable to parse with IDENTIFIER instead of 'STRING'
+		entity_decl	-> 'ENTITY'! IDENTIFIER ';'! att_decl* 'END_ENTITY'! ';'! @OnEntity;
+		type_decl	-> 'TYPE'! IDENTIFIER '='! ('SELECT'! '('! IDENTIFIER (','! IDENTIFIER)* ')'! @OnSelectType
+												| ('NUMBER' | 'STRING') @OnPrimitiveType
+												) ';'! 'END_TYPE'! ';'!;
+		use_decl	-> 'USE'! 'FROM'! IDENTIFIER^ ';'! @OnUse;
+		schema_decl -> 'SCHEMA'! IDENTIFIER^ ';'! @OnSchema;
+		schema_body -> schema_decl (comment_exp | use_decl | type_decl | entity_decl)*;
+		comment_exp -> ANNOTATION^;
+		root		-> comment_exp* schema_body;
+	}
+}
