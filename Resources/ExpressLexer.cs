@@ -43,6 +43,18 @@ namespace Express
 			/// The unique identifier for terminal ANNOTATION
 			/// </summary>
 			public const int TerminalAnnotation = 0x0007;
+			/// <summary>
+			/// The unique identifier for terminal INTEGER_LITERAL_DECIMAL
+			/// </summary>
+			public const int TerminalIntegerLiteralDecimal = 0x0008;
+			/// <summary>
+			/// The unique identifier for terminal INTEGER_LITERAL_HEXA
+			/// </summary>
+			public const int TerminalIntegerLiteralHexa = 0x0009;
+			/// <summary>
+			/// The unique identifier for terminal REAL_LITERAL
+			/// </summary>
+			public const int TerminalRealLiteral = 0x000A;
 		}
 		/// <summary>
 		/// Contains the constant IDs for the contexts for this lexer
@@ -69,23 +81,45 @@ namespace Express
 			new Symbol(0x0005, "SEPARATOR"),
 			new Symbol(0x0006, "IDENTIFIER"),
 			new Symbol(0x0007, "ANNOTATION"),
-			new Symbol(0x0013, "STRING"),
-			new Symbol(0x0014, "NUMBER"),
-			new Symbol(0x0015, ":"),
-			new Symbol(0x0016, "OPTIONAL"),
-			new Symbol(0x0017, ";"),
-			new Symbol(0x0018, "ENTITY"),
-			new Symbol(0x001A, "END_ENTITY"),
-			new Symbol(0x001B, "SELECT"),
-			new Symbol(0x001C, "("),
-			new Symbol(0x001D, ","),
-			new Symbol(0x001F, ")"),
-			new Symbol(0x0020, "TYPE"),
-			new Symbol(0x0021, "="),
-			new Symbol(0x0022, "END_TYPE"),
-			new Symbol(0x0023, "USE"),
-			new Symbol(0x0024, "FROM"),
-			new Symbol(0x0025, "SCHEMA") };
+			new Symbol(0x0008, "INTEGER_LITERAL_DECIMAL"),
+			new Symbol(0x0009, "INTEGER_LITERAL_HEXA"),
+			new Symbol(0x000A, "REAL_LITERAL"),
+			new Symbol(0x0025, "true"),
+			new Symbol(0x0026, "false"),
+			new Symbol(0x0027, "STRING"),
+			new Symbol(0x0028, "NUMBER"),
+			new Symbol(0x0029, "BOOLEAN"),
+			new Symbol(0x002A, "LOGICAL"),
+			new Symbol(0x002B, "BINARY"),
+			new Symbol(0x002C, "INTEGER"),
+			new Symbol(0x002D, "REAL"),
+			new Symbol(0x002E, ">="),
+			new Symbol(0x002F, ">"),
+			new Symbol(0x0030, "<"),
+			new Symbol(0x0031, "<="),
+			new Symbol(0x0032, "=="),
+			new Symbol(0x0033, "OR"),
+			new Symbol(0x0034, "AND"),
+			new Symbol(0x0035, "{"),
+			new Symbol(0x0036, "SELF"),
+			new Symbol(0x0037, "}"),
+			new Symbol(0x0038, "EXISTS"),
+			new Symbol(0x0039, "("),
+			new Symbol(0x003A, ")"),
+			new Symbol(0x003B, ":"),
+			new Symbol(0x003C, ";"),
+			new Symbol(0x003D, "WHERE"),
+			new Symbol(0x003F, "OPTIONAL"),
+			new Symbol(0x0040, "ENTITY"),
+			new Symbol(0x0042, "END_ENTITY"),
+			new Symbol(0x0043, "SELECT"),
+			new Symbol(0x0044, ","),
+			new Symbol(0x0046, "TYPE"),
+			new Symbol(0x0047, "="),
+			new Symbol(0x0048, "END_TYPE"),
+			new Symbol(0x0049, "USE"),
+			new Symbol(0x004A, "FROM"),
+			new Symbol(0x004B, "SCHEMA") };
 		/// <summary>
 		/// Initializes a new instance of the lexer
 		/// </summary>

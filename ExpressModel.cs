@@ -21,7 +21,7 @@ namespace Express_Model
     }
     public class Schema : NamedElement, OwlGeneration
     {
-        public static string[] primitiveTypes = { "NUMBER", "STRING" };
+        public static string[] primitiveTypes = { "NUMBER", "STRING", "BINARY", "LOGICAL", "BOOLEAN", "INTEGER", "REAL" };
 
         private string schemaBase;
         private List<string> imports = new List<string>();
@@ -43,7 +43,17 @@ namespace Express_Model
                 case "STRING":
                     return "xsd:string";
                 case "NUMBER":
+                    return "xsd:double";//TODO: integer or real
+                case "BINARY":
+                    return "xsd:base64Binary";//Base 32 in the last specification
+                case "LOGICAL":
+                    return "xsd:boolean";//TODO: Same as boolean with 'undefined' additional value
+                case "BOOLEAN":
+                    return "xsd:boolean";
+                case "INTEGER":
                     return "xsd:int";
+                case "REAL":
+                    return "xsd:double";
                 default:
                     return $":{key}";
             }

@@ -23,49 +23,109 @@ namespace Express
 		public class ID
 		{
 			/// <summary>
+			/// The unique identifier for variable numeric_lit
+			/// </summary>
+			public const int VariableNumericLit = 0x000B;
+			/// <summary>
+			/// The unique identifier for variable literal
+			/// </summary>
+			public const int VariableLiteral = 0x000C;
+			/// <summary>
 			/// The unique identifier for variable pt_keyword
 			/// </summary>
-			public const int VariablePtKeyword = 0x0008;
+			public const int VariablePtKeyword = 0x000D;
 			/// <summary>
 			/// The unique identifier for variable type_id
 			/// </summary>
-			public const int VariableTypeId = 0x0009;
+			public const int VariableTypeId = 0x000E;
+			/// <summary>
+			/// The unique identifier for variable gt_comp_op
+			/// </summary>
+			public const int VariableGtCompOp = 0x000F;
+			/// <summary>
+			/// The unique identifier for variable lt_comp_op
+			/// </summary>
+			public const int VariableLtCompOp = 0x0010;
+			/// <summary>
+			/// The unique identifier for variable num_op
+			/// </summary>
+			public const int VariableNumOp = 0x0011;
+			/// <summary>
+			/// The unique identifier for variable comp_op
+			/// </summary>
+			public const int VariableCompOp = 0x0012;
+			/// <summary>
+			/// The unique identifier for variable or_exp
+			/// </summary>
+			public const int VariableOrExp = 0x0013;
+			/// <summary>
+			/// The unique identifier for variable and_exp
+			/// </summary>
+			public const int VariableAndExp = 0x0014;
+			/// <summary>
+			/// The unique identifier for variable limits_exp
+			/// </summary>
+			public const int VariableLimitsExp = 0x0015;
+			/// <summary>
+			/// The unique identifier for variable exists_exp
+			/// </summary>
+			public const int VariableExistsExp = 0x0016;
+			/// <summary>
+			/// The unique identifier for variable c_cond_exp
+			/// </summary>
+			public const int VariableCCondExp = 0x0017;
+			/// <summary>
+			/// The unique identifier for variable s_cond_exp
+			/// </summary>
+			public const int VariableSCondExp = 0x0018;
+			/// <summary>
+			/// The unique identifier for variable cond_exp
+			/// </summary>
+			public const int VariableCondExp = 0x0019;
+			/// <summary>
+			/// The unique identifier for variable cond_decl
+			/// </summary>
+			public const int VariableCondDecl = 0x001A;
+			/// <summary>
+			/// The unique identifier for variable where_decl
+			/// </summary>
+			public const int VariableWhereDecl = 0x001B;
 			/// <summary>
 			/// The unique identifier for variable att_decl
 			/// </summary>
-			public const int VariableAttDecl = 0x000A;
+			public const int VariableAttDecl = 0x001C;
 			/// <summary>
 			/// The unique identifier for variable entity_decl
 			/// </summary>
-			public const int VariableEntityDecl = 0x000B;
+			public const int VariableEntityDecl = 0x001D;
 			/// <summary>
 			/// The unique identifier for variable select_decl
 			/// </summary>
-			public const int VariableSelectDecl = 0x000C;
+			public const int VariableSelectDecl = 0x001E;
 			/// <summary>
 			/// The unique identifier for variable type_decl
 			/// </summary>
-			public const int VariableTypeDecl = 0x000D;
+			public const int VariableTypeDecl = 0x001F;
 			/// <summary>
 			/// The unique identifier for variable use_decl
 			/// </summary>
-			public const int VariableUseDecl = 0x000E;
+			public const int VariableUseDecl = 0x0020;
 			/// <summary>
 			/// The unique identifier for variable schema_decl
 			/// </summary>
-			public const int VariableSchemaDecl = 0x000F;
+			public const int VariableSchemaDecl = 0x0021;
 			/// <summary>
 			/// The unique identifier for variable schema_body
 			/// </summary>
-			public const int VariableSchemaBody = 0x0010;
+			public const int VariableSchemaBody = 0x0022;
 			/// <summary>
 			/// The unique identifier for variable comment_exp
 			/// </summary>
-			public const int VariableCommentExp = 0x0011;
+			public const int VariableCommentExp = 0x0023;
 			/// <summary>
 			/// The unique identifier for variable root
 			/// </summary>
-			public const int VariableRoot = 0x0012;
+			public const int VariableRoot = 0x0024;
 		}
 		/// <summary>
 		/// The collection of variables matched by this parser
@@ -75,22 +135,38 @@ namespace Express
 		/// so that variable indices in the automaton can be used to retrieve the variables in this table
 		/// </remarks>
 		private static readonly Symbol[] variables = {
-			new Symbol(0x0008, "pt_keyword"), 
-			new Symbol(0x0009, "type_id"), 
-			new Symbol(0x000A, "att_decl"), 
-			new Symbol(0x000B, "entity_decl"), 
-			new Symbol(0x000C, "select_decl"), 
-			new Symbol(0x000D, "type_decl"), 
-			new Symbol(0x000E, "use_decl"), 
-			new Symbol(0x000F, "schema_decl"), 
-			new Symbol(0x0010, "schema_body"), 
-			new Symbol(0x0011, "comment_exp"), 
-			new Symbol(0x0012, "root"), 
-			new Symbol(0x0019, "__V25"), 
-			new Symbol(0x001E, "__V30"), 
-			new Symbol(0x0026, "__V38"), 
-			new Symbol(0x0027, "__V39"), 
-			new Symbol(0x0028, "__VAxiom") };
+			new Symbol(0x000B, "numeric_lit"), 
+			new Symbol(0x000C, "literal"), 
+			new Symbol(0x000D, "pt_keyword"), 
+			new Symbol(0x000E, "type_id"), 
+			new Symbol(0x000F, "gt_comp_op"), 
+			new Symbol(0x0010, "lt_comp_op"), 
+			new Symbol(0x0011, "num_op"), 
+			new Symbol(0x0012, "comp_op"), 
+			new Symbol(0x0013, "or_exp"), 
+			new Symbol(0x0014, "and_exp"), 
+			new Symbol(0x0015, "limits_exp"), 
+			new Symbol(0x0016, "exists_exp"), 
+			new Symbol(0x0017, "c_cond_exp"), 
+			new Symbol(0x0018, "s_cond_exp"), 
+			new Symbol(0x0019, "cond_exp"), 
+			new Symbol(0x001A, "cond_decl"), 
+			new Symbol(0x001B, "where_decl"), 
+			new Symbol(0x001C, "att_decl"), 
+			new Symbol(0x001D, "entity_decl"), 
+			new Symbol(0x001E, "select_decl"), 
+			new Symbol(0x001F, "type_decl"), 
+			new Symbol(0x0020, "use_decl"), 
+			new Symbol(0x0021, "schema_decl"), 
+			new Symbol(0x0022, "schema_body"), 
+			new Symbol(0x0023, "comment_exp"), 
+			new Symbol(0x0024, "root"), 
+			new Symbol(0x003E, "__V62"), 
+			new Symbol(0x0041, "__V65"), 
+			new Symbol(0x0045, "__V69"), 
+			new Symbol(0x004C, "__V76"), 
+			new Symbol(0x004D, "__V77"), 
+			new Symbol(0x004E, "__VAxiom") };
 		/// <summary>
 		/// The collection of virtuals matched by this parser
 		/// </summary>
@@ -116,8 +192,26 @@ namespace Express
 			public virtual void OnTerminalSeparator(ASTNode node) {}
 			public virtual void OnTerminalIdentifier(ASTNode node) {}
 			public virtual void OnTerminalAnnotation(ASTNode node) {}
+			public virtual void OnTerminalIntegerLiteralDecimal(ASTNode node) {}
+			public virtual void OnTerminalIntegerLiteralHexa(ASTNode node) {}
+			public virtual void OnTerminalRealLiteral(ASTNode node) {}
+			public virtual void OnVariableNumericLit(ASTNode node) {}
+			public virtual void OnVariableLiteral(ASTNode node) {}
 			public virtual void OnVariablePtKeyword(ASTNode node) {}
 			public virtual void OnVariableTypeId(ASTNode node) {}
+			public virtual void OnVariableGtCompOp(ASTNode node) {}
+			public virtual void OnVariableLtCompOp(ASTNode node) {}
+			public virtual void OnVariableNumOp(ASTNode node) {}
+			public virtual void OnVariableCompOp(ASTNode node) {}
+			public virtual void OnVariableOrExp(ASTNode node) {}
+			public virtual void OnVariableAndExp(ASTNode node) {}
+			public virtual void OnVariableLimitsExp(ASTNode node) {}
+			public virtual void OnVariableExistsExp(ASTNode node) {}
+			public virtual void OnVariableCCondExp(ASTNode node) {}
+			public virtual void OnVariableSCondExp(ASTNode node) {}
+			public virtual void OnVariableCondExp(ASTNode node) {}
+			public virtual void OnVariableCondDecl(ASTNode node) {}
+			public virtual void OnVariableWhereDecl(ASTNode node) {}
 			public virtual void OnVariableAttDecl(ASTNode node) {}
 			public virtual void OnVariableEntityDecl(ASTNode node) {}
 			public virtual void OnVariableSelectDecl(ASTNode node) {}
@@ -151,17 +245,35 @@ namespace Express
 				case 0x0005: visitor.OnTerminalSeparator(node); break;
 				case 0x0006: visitor.OnTerminalIdentifier(node); break;
 				case 0x0007: visitor.OnTerminalAnnotation(node); break;
-				case 0x0008: visitor.OnVariablePtKeyword(node); break;
-				case 0x0009: visitor.OnVariableTypeId(node); break;
-				case 0x000A: visitor.OnVariableAttDecl(node); break;
-				case 0x000B: visitor.OnVariableEntityDecl(node); break;
-				case 0x000C: visitor.OnVariableSelectDecl(node); break;
-				case 0x000D: visitor.OnVariableTypeDecl(node); break;
-				case 0x000E: visitor.OnVariableUseDecl(node); break;
-				case 0x000F: visitor.OnVariableSchemaDecl(node); break;
-				case 0x0010: visitor.OnVariableSchemaBody(node); break;
-				case 0x0011: visitor.OnVariableCommentExp(node); break;
-				case 0x0012: visitor.OnVariableRoot(node); break;
+				case 0x0008: visitor.OnTerminalIntegerLiteralDecimal(node); break;
+				case 0x0009: visitor.OnTerminalIntegerLiteralHexa(node); break;
+				case 0x000A: visitor.OnTerminalRealLiteral(node); break;
+				case 0x000B: visitor.OnVariableNumericLit(node); break;
+				case 0x000C: visitor.OnVariableLiteral(node); break;
+				case 0x000D: visitor.OnVariablePtKeyword(node); break;
+				case 0x000E: visitor.OnVariableTypeId(node); break;
+				case 0x000F: visitor.OnVariableGtCompOp(node); break;
+				case 0x0010: visitor.OnVariableLtCompOp(node); break;
+				case 0x0011: visitor.OnVariableNumOp(node); break;
+				case 0x0012: visitor.OnVariableCompOp(node); break;
+				case 0x0013: visitor.OnVariableOrExp(node); break;
+				case 0x0014: visitor.OnVariableAndExp(node); break;
+				case 0x0015: visitor.OnVariableLimitsExp(node); break;
+				case 0x0016: visitor.OnVariableExistsExp(node); break;
+				case 0x0017: visitor.OnVariableCCondExp(node); break;
+				case 0x0018: visitor.OnVariableSCondExp(node); break;
+				case 0x0019: visitor.OnVariableCondExp(node); break;
+				case 0x001A: visitor.OnVariableCondDecl(node); break;
+				case 0x001B: visitor.OnVariableWhereDecl(node); break;
+				case 0x001C: visitor.OnVariableAttDecl(node); break;
+				case 0x001D: visitor.OnVariableEntityDecl(node); break;
+				case 0x001E: visitor.OnVariableSelectDecl(node); break;
+				case 0x001F: visitor.OnVariableTypeDecl(node); break;
+				case 0x0020: visitor.OnVariableUseDecl(node); break;
+				case 0x0021: visitor.OnVariableSchemaDecl(node); break;
+				case 0x0022: visitor.OnVariableSchemaBody(node); break;
+				case 0x0023: visitor.OnVariableCommentExp(node); break;
+				case 0x0024: visitor.OnVariableRoot(node); break;
 			}
 		}
 	}

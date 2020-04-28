@@ -12,16 +12,42 @@
 					|  U+2029; //Paragraph separator character (U+2029)
 		WHITE_SPACE -> U+0020 | U+0009 | U+000B | U+000C;
 		SEPARATOR   -> (WHITE_SPACE | NEW_LINE)+;
-		IDENTIFIER	-> [a-zA-Z_][a-zA-Z_]*;
+		IDENTIFIER	-> [a-zA-Z_][a-zA-Z0-9_]*;
 		ANNOTATION	-> '(*' (.* - (.* '*)' .*)) '*)';
+		INTEGER_LITERAL_DECIMAL -> ('0' | [1-9] [0-9]*) ([Uu] [Ll]? | [Ll] [Uu]? )? ;
+		INTEGER_LITERAL_HEXA	-> '0' [xX] [a-fA-F0-9]+ ([Uu] [Ll]? | [Ll] [Uu]? )? ;
+		REAL_LITERAL			-> ('0' | [1-9] [0-9]*)? '.' ('0' | [1-9] [0-9]*) ([eE] ('+'|'-')? ('0' | [1-9] [0-9]*))? [FfDdMm]?
+								|  ('0' | [1-9] [0-9]*) ([eE] ('+'|'-')? ('0' | [1-9] [0-9]*)) [FfDdMm]?
+								|  ('0' | [1-9] [0-9]*) [FfDdMm] ;
 	}
 	rules {
-		pt_keyword	-> 'STRING' | 'NUMBER'; //Primitive type keywords
+		numeric_lit	-> INTEGER_LITERAL_DECIMAL | INTEGER_LITERAL_HEXA | REAL_LITERAL;
+		literal		-> 'true' | 'false' | numeric_lit;
+		pt_keyword	-> 'STRING' | 'NUMBER' | 'BOOLEAN' | 'LOGICAL' | 'BINARY' | 'INTEGER' | 'REAL'; //Primitive type keywords
 		type_id		-> (IDENTIFIER | pt_keyword)^;
-		att_decl	-> IDENTIFIER ':'! 'OPTIONAL' type_id ';'!; //FIXME: Unable to parse with IDENTIFIER instead of 'STRING'
-		entity_decl	-> 'ENTITY'! IDENTIFIER ';'! att_decl* 'END_ENTITY'! ';'!;
+		gt_comp_op	-> '>=' | '>'; //greater or equal comparison
+		lt_comp_op	-> '<' | '<='; //liter or equal comparison
+		num_op		-> lt_comp_op | gt_comp_op; //Numerical comparison symbols
+		comp_op		-> '==' | num_op; //all comparison symbols
+		or_exp		-> s_cond_exp 'OR'! s_cond_exp 
+					|  s_cond_exp 'OR'! c_cond_exp;
+					//|  '(' or_exp ')';
+		//comp_exp	-> (numeric_lit comp_op IDENTIFIER) | (IDENTIFIER comp_op numeric_lit);
+		and_exp		-> s_cond_exp 'AND'! s_cond_exp
+					|  s_cond_exp 'AND'! c_cond_exp;
+					//| '(' and_exp ')';
+		//neg_exp		-> 'NOT'^ cond_exp;
+		limits_exp	-> '{' numeric_lit lt_comp_op 'SELF' lt_comp_op numeric_lit '}';
+		exists_exp	-> 'EXISTS'^ '('! IDENTIFIER ')'!;
+		c_cond_exp	-> and_exp | or_exp;
+		s_cond_exp	-> exists_exp | limits_exp;
+		cond_exp	-> s_cond_exp | c_cond_exp;
+		cond_decl	-> IDENTIFIER ':'! cond_exp ';'!;
+		where_decl	-> 'WHERE'! cond_decl*;
+		att_decl	-> IDENTIFIER ':'! 'OPTIONAL' type_id ';'!;
+		entity_decl	-> 'ENTITY'! IDENTIFIER ';'! att_decl* where_decl?'END_ENTITY'! ';'!;
 		select_decl	-> 'SELECT'! '('! IDENTIFIER (','! IDENTIFIER)* ')'!;
-		type_decl	-> 'TYPE'! IDENTIFIER '='! (select_decl | pt_keyword) ';'! 'END_TYPE'! ';'!;
+		type_decl	-> 'TYPE'! IDENTIFIER '='! (select_decl | pt_keyword) ';'! where_decl? 'END_TYPE'! ';'!;
 		use_decl	-> 'USE'! 'FROM'! IDENTIFIER ';'!;
 		schema_decl -> 'SCHEMA'! IDENTIFIER ';'!;
 		schema_body -> schema_decl (comment_exp | use_decl | type_decl | entity_decl)*;
