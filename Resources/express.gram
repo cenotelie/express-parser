@@ -16,15 +16,16 @@
 		ANNOTATION	-> '(*' (.* - (.* '*)' .*)) '*)';
 	}
 	rules {
-		att_decl	-> IDENTIFIER ':'! 'OPTIONAL' 'STRING' ';'! @OnAttribute; //FIXME: Unable to parse with IDENTIFIER instead of 'STRING'
-		entity_decl	-> 'ENTITY'! IDENTIFIER ';'! att_decl* 'END_ENTITY'! ';'! @OnEntity;
-		type_decl	-> 'TYPE'! IDENTIFIER '='! ('SELECT'! '('! IDENTIFIER (','! IDENTIFIER)* ')'! @OnSelectType
-												| ('NUMBER' | 'STRING') @OnPrimitiveType
-												) ';'! 'END_TYPE'! ';'!;
-		use_decl	-> 'USE'! 'FROM'! IDENTIFIER^ ';'! @OnUse;
-		schema_decl -> 'SCHEMA'! IDENTIFIER^ ';'! @OnSchema;
+		pt_keyword	-> 'STRING' | 'NUMBER'; //Primitive type keywords
+		type_id		-> (IDENTIFIER | pt_keyword)^;
+		att_decl	-> IDENTIFIER ':'! 'OPTIONAL' type_id ';'!; //FIXME: Unable to parse with IDENTIFIER instead of 'STRING'
+		entity_decl	-> 'ENTITY'! IDENTIFIER ';'! att_decl* 'END_ENTITY'! ';'!;
+		select_decl	-> 'SELECT'! '('! IDENTIFIER (','! IDENTIFIER)* ')'!;
+		type_decl	-> 'TYPE'! IDENTIFIER '='! (select_decl | pt_keyword) ';'! 'END_TYPE'! ';'!;
+		use_decl	-> 'USE'! 'FROM'! IDENTIFIER ';'!;
+		schema_decl -> 'SCHEMA'! IDENTIFIER ';'!;
 		schema_body -> schema_decl (comment_exp | use_decl | type_decl | entity_decl)*;
-		comment_exp -> ANNOTATION^;
+		comment_exp -> ANNOTATION;
 		root		-> comment_exp* schema_body;
 	}
 }
