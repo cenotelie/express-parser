@@ -73,14 +73,19 @@ namespace Express_Parser
         private void ProcessType(ASTNode node)
         {
             string name = node.Children[0].Value;
-            switch(node.Children[1].ToString())
+            for (int i = 1; i < node.Children.Count; i++)
             {
-                case "select_decl":
-                    this.ProcessSelectType(name, node.Children[1]);
-                    break;
-                default:
-                    this.ProcessPrimitiveType(name, node.Children[1]);
-                    break;
+                switch (node.Children[i].ToString())
+                {
+                    case "select_decl":
+                        this.ProcessSelectType(name, node.Children[1]);
+                        break;
+                    case "where_decl":
+                        break;
+                    default:
+                        this.ProcessPrimitiveType(name, node.Children[1]);
+                        break;
+                }
             }
         }
         private void ProcessSelectType(string name, ASTNode node)
@@ -99,13 +104,31 @@ namespace Express_Parser
         private void ProcessEntity(ASTNode node)
         {
             Entity entity = new Entity(node.Children[0].Value);
-            //Attributes
             for (int i = 1; i < node.Children.Count; i++)
             {
-                
-                ProcessAttribute(entity, node.Children[i]);
+                switch(node.Children[i].ToString())
+                {
+                    case "supertype_decl":
+                        this.ProcessInheritance(entity, node.Children[i]);
+                        break;
+                    case "where_decl":
+                        break;
+                    case "abstract_decl":
+                        entity.Abstract = true;
+                        break;
+                    default:
+                        this.ProcessAttribute(entity, node.Children[i]);
+                        break;
+                }
             }
             this.schema.AddEntity(entity);
+        }
+        private void ProcessInheritance(Entity owner, ASTNode node)
+        {
+            for (int i = 0; i < node.Children.Count; i++)
+            {
+                owner.AddSuperType(node.Children[i].Value);
+            }
         }
         private void ProcessAttribute(Entity owner, ASTNode node)
         {

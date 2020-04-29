@@ -28,24 +28,24 @@
 		gt_comp_op	-> '>=' | '>'; //greater or equal comparison
 		lt_comp_op	-> '<' | '<='; //liter or equal comparison
 		num_op		-> lt_comp_op | gt_comp_op; //Numerical comparison symbols
-		comp_op		-> '==' | num_op; //all comparison symbols
-		or_exp		-> s_cond_exp 'OR'! s_cond_exp 
-					|  s_cond_exp 'OR'! c_cond_exp;
-					//|  '(' or_exp ')';
-		//comp_exp	-> (numeric_lit comp_op IDENTIFIER) | (IDENTIFIER comp_op numeric_lit);
-		and_exp		-> s_cond_exp 'AND'! s_cond_exp
-					|  s_cond_exp 'AND'! c_cond_exp;
-					//| '(' and_exp ')';
-		//neg_exp		-> 'NOT'^ cond_exp;
-		limits_exp	-> '{' numeric_lit lt_comp_op 'SELF' lt_comp_op numeric_lit '}';
+		comp_op		-> '==' | num_op; //all comparison symbol
+		not_opd		-> s_cond_exp | '('! (and_exp | or_exp) ')'!;
+		not_exp		-> 'NOT'! not_opd;
+		or_opd		-> s_cond_exp | not_exp;
+		or_exp		-> or_opd 'OR'! or_opd ('OR'! or_opd)*;
+		and_opd		-> s_cond_exp | not_exp | or_exp;
+		and_exp		-> and_opd 'AND'! and_opd ('AND'! and_opd)*;
+		comp_exp	-> '{'! (numeric_lit comp_op IDENTIFIER) | (IDENTIFIER comp_op numeric_lit) '}'!;
+		limits_exp	-> '{'! numeric_lit lt_comp_op 'SELF' lt_comp_op numeric_lit '}'!;
 		exists_exp	-> 'EXISTS'^ '('! IDENTIFIER ')'!;
-		c_cond_exp	-> and_exp | or_exp;
+		c_cond_exp	-> not_exp | and_exp | or_exp; 
 		s_cond_exp	-> exists_exp | limits_exp;
-		cond_exp	-> s_cond_exp | c_cond_exp;
-		cond_decl	-> IDENTIFIER ':'! cond_exp ';'!;
-		where_decl	-> 'WHERE'! cond_decl*;
-		att_decl	-> IDENTIFIER ':'! 'OPTIONAL' type_id ';'!;
-		entity_decl	-> 'ENTITY'! IDENTIFIER ';'! att_decl* where_decl?'END_ENTITY'! ';'!;
+		cond_exp	-> s_cond_exp | c_cond_exp | '('! cond_exp ')'!;
+		where_decl	-> 'WHERE'! (IDENTIFIER ':'! cond_exp ';'!)*;
+		supertype_decl	-> 'SUBTYPE'! 'OF'! '('! IDENTIFIER (','! IDENTIFIER)* ')'!; 
+		att_decl	-> IDENTIFIER ':'! 'OPTIONAL'? type_id ';'!;
+		abstract_decl	-> 'ABSTRACT';
+		entity_decl	-> 'ENTITY'! IDENTIFIER abstract_decl? supertype_decl? ';'! att_decl* where_decl? 'END_ENTITY'! ';'!;
 		select_decl	-> 'SELECT'! '('! IDENTIFIER (','! IDENTIFIER)* ')'!;
 		type_decl	-> 'TYPE'! IDENTIFIER '='! (select_decl | pt_keyword) ';'! where_decl? 'END_TYPE'! ';'!;
 		use_decl	-> 'USE'! 'FROM'! IDENTIFIER ';'!;

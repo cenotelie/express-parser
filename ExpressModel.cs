@@ -109,8 +109,8 @@ namespace Express_Model
     public class SelectType : NamedElement, OwlGeneration
     {
         private List<string> types = new List<string>();
-        public SelectType(): base(null) { }
         public SelectType(string name): base(name) { }
+        public SelectType() : this(null) { }
         public void AddType(string type)
         {
             this.types.Add(type);
@@ -127,12 +127,25 @@ namespace Express_Model
     }
     public class Entity : NamedElement, OwlGeneration
     {
+        private List<string> superTypes = new List<string>();
         private List<Attribute> attributes = new List<Attribute>();
-        public Entity() : base(null) { }
-        public Entity(string name): base(name) { }
+        
+        public Entity(string name): base(name) 
+        {
+            this.Abstract = false;
+        }
+        public Entity() : this(null) { }
+        public bool Abstract
+        {
+            get; set;
+        }
         public List<string> TypeDef
         {
             get; set;
+        }
+        public void AddSuperType(string type)
+        {
+            this.superTypes.Add(type);
         }
         public void AddAttribute(Attribute attribute)
         {
@@ -142,6 +155,10 @@ namespace Express_Model
         {
             writer.WriteLine($"Declaration(Class(:{this.Name}))");
             //Attributes
+            foreach(string super in this.superTypes)
+            {
+                writer.WriteLine($"SubClassOf(:{this.Name} :{super})");
+            }
             foreach(Attribute attribute in this.attributes)
             {
                 attribute.TypeDef = this.TypeDef;
@@ -151,11 +168,11 @@ namespace Express_Model
     }
     public class Attribute : NamedElement, OwlGeneration
     {
-        public Attribute() : base(null) { }
         public Attribute(string name, Entity owner): base(name) 
         {
             this.Owner = owner;
         }
+        public Attribute() : base(null) { }
         public Entity Owner
         {
             get; set;
