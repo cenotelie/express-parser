@@ -108,13 +108,17 @@ namespace Express_Parser
             {
                 switch(node.Children[i].ToString())
                 {
+                    case "abstract_decl":
+                        entity.Abstract = true;
+                        break;
+                    case "subtype_decl":
+                        this.ProcessSubTypes(entity, node.Children[i]);
+                        break;
                     case "supertype_decl":
                         this.ProcessInheritance(entity, node.Children[i]);
                         break;
                     case "where_decl":
-                        break;
-                    case "abstract_decl":
-                        entity.Abstract = true;
+                        this.ProcessSubTypes(entity, node.Children[i]);
                         break;
                     default:
                         this.ProcessAttribute(entity, node.Children[i]);
@@ -128,6 +132,15 @@ namespace Express_Parser
             for (int i = 0; i < node.Children.Count; i++)
             {
                 owner.AddSuperType(node.Children[i].Value);
+            }
+        }
+        private void ProcessSubTypes(Entity owner, ASTNode node)
+        {
+            ASTNode selector = node.Children[0];
+            //Only the case "oneof" is considered here
+            for (int i = 1; i < selector.Children.Count; i++)
+            {
+                owner.AddDisjointUnion(selector.Children[i].Value);
             }
         }
         private void ProcessAttribute(Entity owner, ASTNode node)

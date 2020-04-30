@@ -127,6 +127,7 @@ namespace Express_Model
     }
     public class Entity : NamedElement, OwlGeneration
     {
+        private List<string> disjointUnion = new List<string>();
         private List<string> superTypes = new List<string>();
         private List<Attribute> attributes = new List<Attribute>();
         
@@ -143,6 +144,10 @@ namespace Express_Model
         {
             get; set;
         }
+        public void AddDisjointUnion(string type)
+        {
+            this.disjointUnion.Add(type);
+        }
         public void AddSuperType(string type)
         {
             this.superTypes.Add(type);
@@ -154,12 +159,20 @@ namespace Express_Model
         public void GenerateOWl(TextWriter writer)
         {
             writer.WriteLine($"Declaration(Class(:{this.Name}))");
-            //Attributes
+            //sub types
+            if (this.disjointUnion.Count > 0)
+            {
+                var query = this.disjointUnion.Select(x => ":" + x);
+                string union = string.Join(" ", query.ToList());
+                writer.WriteLine($"DisjointUnion(:{this.Name} {union})");
+            }
+            //super types
             foreach(string super in this.superTypes)
             {
                 writer.WriteLine($"SubClassOf(:{this.Name} :{super})");
             }
-            foreach(Attribute attribute in this.attributes)
+            //Attributes
+            foreach (Attribute attribute in this.attributes)
             {
                 attribute.TypeDef = this.TypeDef;
                 attribute.GenerateOWl(writer);
