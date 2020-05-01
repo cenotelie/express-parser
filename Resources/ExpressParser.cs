@@ -25,119 +25,127 @@ namespace Express
 			/// <summary>
 			/// The unique identifier for variable root
 			/// </summary>
-			public const int VariableRoot = 0x000B;
+			public const int VariableRoot = 0x000C;
 			/// <summary>
 			/// The unique identifier for variable comment_exp
 			/// </summary>
-			public const int VariableCommentExp = 0x000C;
+			public const int VariableCommentExp = 0x000D;
 			/// <summary>
 			/// The unique identifier for variable schema_body
 			/// </summary>
-			public const int VariableSchemaBody = 0x000D;
+			public const int VariableSchemaBody = 0x000E;
 			/// <summary>
 			/// The unique identifier for variable use_decl
 			/// </summary>
-			public const int VariableUseDecl = 0x000E;
+			public const int VariableUseDecl = 0x000F;
 			/// <summary>
 			/// The unique identifier for variable schema_decl
 			/// </summary>
-			public const int VariableSchemaDecl = 0x000F;
+			public const int VariableSchemaDecl = 0x0010;
 			/// <summary>
 			/// The unique identifier for variable type_decl
 			/// </summary>
-			public const int VariableTypeDecl = 0x0010;
+			public const int VariableTypeDecl = 0x0011;
 			/// <summary>
 			/// The unique identifier for variable select_decl
 			/// </summary>
-			public const int VariableSelectDecl = 0x0011;
+			public const int VariableSelectDecl = 0x0012;
 			/// <summary>
 			/// The unique identifier for variable entity_decl
 			/// </summary>
-			public const int VariableEntityDecl = 0x0012;
+			public const int VariableEntityDecl = 0x0013;
 			/// <summary>
 			/// The unique identifier for variable abstract_decl
 			/// </summary>
-			public const int VariableAbstractDecl = 0x0013;
+			public const int VariableAbstractDecl = 0x0014;
 			/// <summary>
 			/// The unique identifier for variable supertype_decl
 			/// </summary>
-			public const int VariableSupertypeDecl = 0x0014;
+			public const int VariableSupertypeDecl = 0x0015;
 			/// <summary>
 			/// The unique identifier for variable subtype_decl
 			/// </summary>
-			public const int VariableSubtypeDecl = 0x0015;
+			public const int VariableSubtypeDecl = 0x0016;
 			/// <summary>
 			/// The unique identifier for variable att_decl
 			/// </summary>
-			public const int VariableAttDecl = 0x0016;
+			public const int VariableAttDecl = 0x0017;
 			/// <summary>
 			/// The unique identifier for variable where_decl
 			/// </summary>
-			public const int VariableWhereDecl = 0x0017;
+			public const int VariableWhereDecl = 0x0018;
 			/// <summary>
 			/// The unique identifier for variable or_exp
 			/// </summary>
-			public const int VariableOrExp = 0x0018;
+			public const int VariableOrExp = 0x0019;
 			/// <summary>
 			/// The unique identifier for variable and_exp
 			/// </summary>
-			public const int VariableAndExp = 0x0019;
+			public const int VariableAndExp = 0x001A;
 			/// <summary>
 			/// The unique identifier for variable unary_exp
 			/// </summary>
-			public const int VariableUnaryExp = 0x001A;
+			public const int VariableUnaryExp = 0x001B;
 			/// <summary>
 			/// The unique identifier for variable atom_exp
 			/// </summary>
-			public const int VariableAtomExp = 0x001B;
+			public const int VariableAtomExp = 0x001C;
 			/// <summary>
 			/// The unique identifier for variable exists_exp
 			/// </summary>
-			public const int VariableExistsExp = 0x001C;
+			public const int VariableExistsExp = 0x001D;
 			/// <summary>
 			/// The unique identifier for variable limits_exp
 			/// </summary>
-			public const int VariableLimitsExp = 0x001D;
+			public const int VariableLimitsExp = 0x001E;
 			/// <summary>
 			/// The unique identifier for variable comp_exp
 			/// </summary>
-			public const int VariableCompExp = 0x001E;
+			public const int VariableCompExp = 0x001F;
+			/// <summary>
+			/// The unique identifier for variable comp_opd
+			/// </summary>
+			public const int VariableCompOpd = 0x0020;
 			/// <summary>
 			/// The unique identifier for variable comp_op
 			/// </summary>
-			public const int VariableCompOp = 0x001F;
+			public const int VariableCompOp = 0x0021;
+			/// <summary>
+			/// The unique identifier for variable eq_op
+			/// </summary>
+			public const int VariableEqOp = 0x0022;
 			/// <summary>
 			/// The unique identifier for variable num_op
 			/// </summary>
-			public const int VariableNumOp = 0x0020;
+			public const int VariableNumOp = 0x0023;
 			/// <summary>
 			/// The unique identifier for variable lt_comp_op
 			/// </summary>
-			public const int VariableLtCompOp = 0x0021;
+			public const int VariableLtCompOp = 0x0024;
 			/// <summary>
 			/// The unique identifier for variable gt_comp_op
 			/// </summary>
-			public const int VariableGtCompOp = 0x0022;
+			public const int VariableGtCompOp = 0x0025;
 			/// <summary>
 			/// The unique identifier for variable selector_exp
 			/// </summary>
-			public const int VariableSelectorExp = 0x0023;
+			public const int VariableSelectorExp = 0x0026;
 			/// <summary>
 			/// The unique identifier for variable type_id
 			/// </summary>
-			public const int VariableTypeId = 0x0024;
+			public const int VariableTypeId = 0x0027;
 			/// <summary>
 			/// The unique identifier for variable pt_keyword
 			/// </summary>
-			public const int VariablePtKeyword = 0x0025;
+			public const int VariablePtKeyword = 0x0028;
 			/// <summary>
 			/// The unique identifier for variable literal
 			/// </summary>
-			public const int VariableLiteral = 0x0026;
+			public const int VariableLiteral = 0x0029;
 			/// <summary>
 			/// The unique identifier for variable numeric_lit
 			/// </summary>
-			public const int VariableNumericLit = 0x0027;
+			public const int VariableNumericLit = 0x002A;
 		}
 		/// <summary>
 		/// The collection of variables matched by this parser
@@ -147,43 +155,46 @@ namespace Express
 		/// so that variable indices in the automaton can be used to retrieve the variables in this table
 		/// </remarks>
 		private static readonly Symbol[] variables = {
-			new Symbol(0x000B, "root"), 
-			new Symbol(0x000C, "comment_exp"), 
-			new Symbol(0x000D, "schema_body"), 
-			new Symbol(0x000E, "use_decl"), 
-			new Symbol(0x000F, "schema_decl"), 
-			new Symbol(0x0010, "type_decl"), 
-			new Symbol(0x0011, "select_decl"), 
-			new Symbol(0x0012, "entity_decl"), 
-			new Symbol(0x0013, "abstract_decl"), 
-			new Symbol(0x0014, "supertype_decl"), 
-			new Symbol(0x0015, "subtype_decl"), 
-			new Symbol(0x0016, "att_decl"), 
-			new Symbol(0x0017, "where_decl"), 
-			new Symbol(0x0018, "or_exp"), 
-			new Symbol(0x0019, "and_exp"), 
-			new Symbol(0x001A, "unary_exp"), 
-			new Symbol(0x001B, "atom_exp"), 
-			new Symbol(0x001C, "exists_exp"), 
-			new Symbol(0x001D, "limits_exp"), 
-			new Symbol(0x001E, "comp_exp"), 
-			new Symbol(0x001F, "comp_op"), 
-			new Symbol(0x0020, "num_op"), 
-			new Symbol(0x0021, "lt_comp_op"), 
-			new Symbol(0x0022, "gt_comp_op"), 
-			new Symbol(0x0023, "selector_exp"), 
-			new Symbol(0x0024, "type_id"), 
-			new Symbol(0x0025, "pt_keyword"), 
-			new Symbol(0x0026, "literal"), 
-			new Symbol(0x0027, "numeric_lit"), 
-			new Symbol(0x0028, "__V40"), 
-			new Symbol(0x0029, "__V41"), 
-			new Symbol(0x0034, "__V52"), 
+			new Symbol(0x000C, "root"), 
+			new Symbol(0x000D, "comment_exp"), 
+			new Symbol(0x000E, "schema_body"), 
+			new Symbol(0x000F, "use_decl"), 
+			new Symbol(0x0010, "schema_decl"), 
+			new Symbol(0x0011, "type_decl"), 
+			new Symbol(0x0012, "select_decl"), 
+			new Symbol(0x0013, "entity_decl"), 
+			new Symbol(0x0014, "abstract_decl"), 
+			new Symbol(0x0015, "supertype_decl"), 
+			new Symbol(0x0016, "subtype_decl"), 
+			new Symbol(0x0017, "att_decl"), 
+			new Symbol(0x0018, "where_decl"), 
+			new Symbol(0x0019, "or_exp"), 
+			new Symbol(0x001A, "and_exp"), 
+			new Symbol(0x001B, "unary_exp"), 
+			new Symbol(0x001C, "atom_exp"), 
+			new Symbol(0x001D, "exists_exp"), 
+			new Symbol(0x001E, "limits_exp"), 
+			new Symbol(0x001F, "comp_exp"), 
+			new Symbol(0x0020, "comp_opd"), 
+			new Symbol(0x0021, "comp_op"), 
+			new Symbol(0x0022, "eq_op"), 
+			new Symbol(0x0023, "num_op"), 
+			new Symbol(0x0024, "lt_comp_op"), 
+			new Symbol(0x0025, "gt_comp_op"), 
+			new Symbol(0x0026, "selector_exp"), 
+			new Symbol(0x0027, "type_id"), 
+			new Symbol(0x0028, "pt_keyword"), 
+			new Symbol(0x0029, "literal"), 
+			new Symbol(0x002A, "numeric_lit"), 
+			new Symbol(0x002B, "__V43"), 
+			new Symbol(0x002C, "__V44"), 
 			new Symbol(0x0037, "__V55"), 
-			new Symbol(0x003C, "__V60"), 
-			new Symbol(0x0041, "__V65"), 
+			new Symbol(0x003A, "__V58"), 
+			new Symbol(0x003F, "__V63"), 
+			new Symbol(0x0044, "__V68"), 
 			new Symbol(0x004E, "__V78"), 
-			new Symbol(0x0058, "__VAxiom") };
+			new Symbol(0x0055, "__V85"), 
+			new Symbol(0x005F, "__VAxiom") };
 		/// <summary>
 		/// The collection of virtuals matched by this parser
 		/// </summary>
@@ -212,6 +223,7 @@ namespace Express
 			public virtual void OnTerminalIntegerLiteralDecimal(ASTNode node) {}
 			public virtual void OnTerminalIntegerLiteralHexa(ASTNode node) {}
 			public virtual void OnTerminalRealLiteral(ASTNode node) {}
+			public virtual void OnTerminalStringLiteral(ASTNode node) {}
 			public virtual void OnVariableRoot(ASTNode node) {}
 			public virtual void OnVariableCommentExp(ASTNode node) {}
 			public virtual void OnVariableSchemaBody(ASTNode node) {}
@@ -232,7 +244,9 @@ namespace Express
 			public virtual void OnVariableExistsExp(ASTNode node) {}
 			public virtual void OnVariableLimitsExp(ASTNode node) {}
 			public virtual void OnVariableCompExp(ASTNode node) {}
+			public virtual void OnVariableCompOpd(ASTNode node) {}
 			public virtual void OnVariableCompOp(ASTNode node) {}
+			public virtual void OnVariableEqOp(ASTNode node) {}
 			public virtual void OnVariableNumOp(ASTNode node) {}
 			public virtual void OnVariableLtCompOp(ASTNode node) {}
 			public virtual void OnVariableGtCompOp(ASTNode node) {}
@@ -268,35 +282,38 @@ namespace Express
 				case 0x0008: visitor.OnTerminalIntegerLiteralDecimal(node); break;
 				case 0x0009: visitor.OnTerminalIntegerLiteralHexa(node); break;
 				case 0x000A: visitor.OnTerminalRealLiteral(node); break;
-				case 0x000B: visitor.OnVariableRoot(node); break;
-				case 0x000C: visitor.OnVariableCommentExp(node); break;
-				case 0x000D: visitor.OnVariableSchemaBody(node); break;
-				case 0x000E: visitor.OnVariableUseDecl(node); break;
-				case 0x000F: visitor.OnVariableSchemaDecl(node); break;
-				case 0x0010: visitor.OnVariableTypeDecl(node); break;
-				case 0x0011: visitor.OnVariableSelectDecl(node); break;
-				case 0x0012: visitor.OnVariableEntityDecl(node); break;
-				case 0x0013: visitor.OnVariableAbstractDecl(node); break;
-				case 0x0014: visitor.OnVariableSupertypeDecl(node); break;
-				case 0x0015: visitor.OnVariableSubtypeDecl(node); break;
-				case 0x0016: visitor.OnVariableAttDecl(node); break;
-				case 0x0017: visitor.OnVariableWhereDecl(node); break;
-				case 0x0018: visitor.OnVariableOrExp(node); break;
-				case 0x0019: visitor.OnVariableAndExp(node); break;
-				case 0x001A: visitor.OnVariableUnaryExp(node); break;
-				case 0x001B: visitor.OnVariableAtomExp(node); break;
-				case 0x001C: visitor.OnVariableExistsExp(node); break;
-				case 0x001D: visitor.OnVariableLimitsExp(node); break;
-				case 0x001E: visitor.OnVariableCompExp(node); break;
-				case 0x001F: visitor.OnVariableCompOp(node); break;
-				case 0x0020: visitor.OnVariableNumOp(node); break;
-				case 0x0021: visitor.OnVariableLtCompOp(node); break;
-				case 0x0022: visitor.OnVariableGtCompOp(node); break;
-				case 0x0023: visitor.OnVariableSelectorExp(node); break;
-				case 0x0024: visitor.OnVariableTypeId(node); break;
-				case 0x0025: visitor.OnVariablePtKeyword(node); break;
-				case 0x0026: visitor.OnVariableLiteral(node); break;
-				case 0x0027: visitor.OnVariableNumericLit(node); break;
+				case 0x000B: visitor.OnTerminalStringLiteral(node); break;
+				case 0x000C: visitor.OnVariableRoot(node); break;
+				case 0x000D: visitor.OnVariableCommentExp(node); break;
+				case 0x000E: visitor.OnVariableSchemaBody(node); break;
+				case 0x000F: visitor.OnVariableUseDecl(node); break;
+				case 0x0010: visitor.OnVariableSchemaDecl(node); break;
+				case 0x0011: visitor.OnVariableTypeDecl(node); break;
+				case 0x0012: visitor.OnVariableSelectDecl(node); break;
+				case 0x0013: visitor.OnVariableEntityDecl(node); break;
+				case 0x0014: visitor.OnVariableAbstractDecl(node); break;
+				case 0x0015: visitor.OnVariableSupertypeDecl(node); break;
+				case 0x0016: visitor.OnVariableSubtypeDecl(node); break;
+				case 0x0017: visitor.OnVariableAttDecl(node); break;
+				case 0x0018: visitor.OnVariableWhereDecl(node); break;
+				case 0x0019: visitor.OnVariableOrExp(node); break;
+				case 0x001A: visitor.OnVariableAndExp(node); break;
+				case 0x001B: visitor.OnVariableUnaryExp(node); break;
+				case 0x001C: visitor.OnVariableAtomExp(node); break;
+				case 0x001D: visitor.OnVariableExistsExp(node); break;
+				case 0x001E: visitor.OnVariableLimitsExp(node); break;
+				case 0x001F: visitor.OnVariableCompExp(node); break;
+				case 0x0020: visitor.OnVariableCompOpd(node); break;
+				case 0x0021: visitor.OnVariableCompOp(node); break;
+				case 0x0022: visitor.OnVariableEqOp(node); break;
+				case 0x0023: visitor.OnVariableNumOp(node); break;
+				case 0x0024: visitor.OnVariableLtCompOp(node); break;
+				case 0x0025: visitor.OnVariableGtCompOp(node); break;
+				case 0x0026: visitor.OnVariableSelectorExp(node); break;
+				case 0x0027: visitor.OnVariableTypeId(node); break;
+				case 0x0028: visitor.OnVariablePtKeyword(node); break;
+				case 0x0029: visitor.OnVariableLiteral(node); break;
+				case 0x002A: visitor.OnVariableNumericLit(node); break;
 			}
 		}
 	}

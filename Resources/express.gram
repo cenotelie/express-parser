@@ -19,6 +19,7 @@
 		REAL_LITERAL			-> ('0' | [1-9] [0-9]*)? '.' ('0' | [1-9] [0-9]*) ([eE] ('+'|'-')? ('0' | [1-9] [0-9]*))? [FfDdMm]?
 								|  ('0' | [1-9] [0-9]*) ([eE] ('+'|'-')? ('0' | [1-9] [0-9]*)) [FfDdMm]?
 								|  ('0' | [1-9] [0-9]*) [FfDdMm] ;
+		STRING_LITERAL		-> '\'' .* '\'' ;
 	}
 	rules {
 		root		-> comment_exp* schema_body;
@@ -40,15 +41,17 @@
 		atom_exp	-> exists_exp | comp_exp | limits_exp | '('! or_exp ')'!;
 		exists_exp	-> 'EXISTS'^ '('! IDENTIFIER ')'!;
 		limits_exp	-> '{'! numeric_lit lt_comp_op 'SELF' lt_comp_op numeric_lit '}'!;
-		comp_exp	-> (numeric_lit comp_op 'SELF') | ('SELF' comp_op numeric_lit);		
-		comp_op		-> '=' | num_op; //all comparison symbol
+		comp_exp	-> comp_opd comp_op comp_opd;
+		comp_opd	-> literal | IDENTIFIER | 'SELF' | ('SELF\\'IDENTIFIER | IDENTIFIER)('.'IDENTIFIER)*;
+		comp_op		-> eq_op | num_op; //all comparison symbol
+		eq_op		-> '=' | ':<>:';
 		num_op		-> lt_comp_op | gt_comp_op; //Numerical comparison symbols
 		lt_comp_op	-> '<' | '<='; //liter or equal comparison
 		gt_comp_op	-> '>=' | '>'; //greater or equal comparison
 		selector_exp	-> 'ONEOF' '('! IDENTIFIER (','! IDENTIFIER)+ ')'!;
 		type_id		-> (IDENTIFIER | pt_keyword)^;
 		pt_keyword	-> 'STRING' | 'NUMBER' | 'BOOLEAN' | 'LOGICAL' | 'BINARY' | 'INTEGER' | 'REAL'; //Primitive type keywords
-		literal		-> 'true' | 'false' | numeric_lit;
+		literal		-> 'true' | 'false' | numeric_lit | STRING_LITERAL;
 		numeric_lit	-> INTEGER_LITERAL_DECIMAL | INTEGER_LITERAL_HEXA | REAL_LITERAL;
 	}
 }

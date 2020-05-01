@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Express_Model
 {
-    interface OwlGeneration
+    interface IOwlGeneration
     {
         void GenerateOWl(TextWriter writer);
     }
@@ -19,7 +19,7 @@ namespace Express_Model
             get; set;
         }
     }
-    public class Schema : NamedElement, OwlGeneration
+    public class Schema : NamedElement, IOwlGeneration
     {
         public static string[] primitiveTypes = { "NUMBER", "STRING", "BINARY", "LOGICAL", "BOOLEAN", "INTEGER", "REAL" };
 
@@ -106,7 +106,7 @@ namespace Express_Model
             writer.WriteLine(")");
         }
     }
-    public class SelectType : NamedElement, OwlGeneration
+    public class SelectType : NamedElement, IOwlGeneration
     {
         private List<string> types = new List<string>();
         public SelectType(string name): base(name) { }
@@ -125,7 +125,7 @@ namespace Express_Model
             writer.WriteLine("))");
         }
     }
-    public class Entity : NamedElement, OwlGeneration
+    public class Entity : NamedElement, IOwlGeneration
     {
         private List<string> disjointUnion = new List<string>();
         private List<string> superTypes = new List<string>();
@@ -179,7 +179,7 @@ namespace Express_Model
             }
         }
     }
-    public class Attribute : NamedElement, OwlGeneration
+    public class Attribute : NamedElement, IOwlGeneration
     {
         public Attribute(string name, Entity owner): base(name) 
         {
