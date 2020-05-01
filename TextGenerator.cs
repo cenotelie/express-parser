@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using Express_Model;
+using Express;
 
 namespace Express_Parser
 {
@@ -38,18 +39,18 @@ namespace Express_Parser
         }
         private void ProcessNode(ASTNode node)
         {
-            switch (node.ToString())
+            switch (node.Symbol.ID)
             {
-                case "schema_decl":
+                case ExpressParser.ID.VariableSchemaDecl:
                     this.ProcessSchema(node);
                     break;
-                case "use_decl":
+                case ExpressParser.ID.VariableUseDecl:
                     this.ProcessUse(node);
                     break;
-                case "type_decl":
+                case ExpressParser.ID.VariableTypeDecl:
                     this.ProcessType(node);
                     break;
-                case "entity_decl":
+                case ExpressParser.ID.VariableEntityDecl:
                     this.ProcessEntity(node);
                     break;
                 default:
@@ -75,12 +76,12 @@ namespace Express_Parser
             string name = node.Children[0].Value;
             for (int i = 1; i < node.Children.Count; i++)
             {
-                switch (node.Children[i].ToString())
+                switch (node.Children[i].Symbol.ID)
                 {
-                    case "select_decl":
+                    case ExpressParser.ID.VariableSelectDecl:
                         this.ProcessSelectType(name, node.Children[1]);
                         break;
-                    case "where_decl":
+                    case ExpressParser.ID.VariableWhereDecl:
                         break;
                     default:
                         this.ProcessPrimitiveType(name, node.Children[1]);
@@ -106,18 +107,18 @@ namespace Express_Parser
             Entity entity = new Entity(node.Children[0].Value);
             for (int i = 1; i < node.Children.Count; i++)
             {
-                switch(node.Children[i].ToString())
+                switch(node.Children[i].Symbol.ID)
                 {
-                    case "abstract_decl":
+                    case ExpressParser.ID.VariableAbstractDecl:
                         entity.Abstract = true;
                         break;
-                    case "subtype_decl":
+                    case ExpressParser.ID.VariableSubtypeDecl:
                         this.ProcessSubTypes(entity, node.Children[i]);
                         break;
-                    case "supertype_decl":
+                    case ExpressParser.ID.VariableSupertypeDecl:
                         this.ProcessInheritance(entity, node.Children[i]);
                         break;
-                    case "where_decl":
+                    case ExpressParser.ID.VariableWhereDecl:
                         this.ProcessSubTypes(entity, node.Children[i]);
                         break;
                     default:

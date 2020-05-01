@@ -61,9 +61,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\mathexp.gram" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\express.gram" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
