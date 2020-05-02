@@ -29,14 +29,14 @@
 		schema_decl -> 'SCHEMA'! schema_id ';'!;
 		type_decl	-> 'TYPE'! entity_id '='! (select_decl | pt_keyword) ';'! where_decl? 'END_TYPE'! ';'!;
 		select_decl	-> 'SELECT'! '('! entity_id (','! entity_id)* ')'!;
-		entity_decl	-> 'ENTITY'! entity_id abstract_decl? subtype_decl? supertype_decl? ';'! derive_decl? prop_decl* where_decl? 'END_ENTITY'! ';'!;
+		entity_decl	-> 'ENTITY'! entity_id abstract_decl? subtype_decl? supertype_decl? ';'! prop_decl* derive_decl? where_decl? 'END_ENTITY'! ';'!;
 		abstract_decl	-> 'ABSTRACT';
 		supertype_decl	-> 'SUBTYPE'! 'OF'! '('! entity_id (','! entity_id)* ')'!;
 		subtype_decl	-> 'SUPERTYPE'! 'OF'! '('! selector_exp ')'!;
-		derive_decl	-> derive_head_decl* 'DERIVE'! derive_body_decl+;
-		derive_head_decl	-> prop_id ':'! type_id ';'!;
-		derive_body_decl	-> att_read_decl ':'! type_id ':='! att_read_decl ';';
-		att_read_decl	-> ('SELF\\'prop_id | prop_id)('.'prop_id)*('['! INTEGER_LITERAL_DECIMAL ']'!)?;
+		derive_decl	-> 'DERIVE'! attr_read_exp ':'! type_id ':='! attr_read_exp ';'!;
+		attr_read_exp	-> ('SELF' | 'SELF\\'prop_id | prop_id)('.'prop_id)*('['! INTEGER_LITERAL_DECIMAL ']'!)?;
+		att_read_decl	-> prop_id('.'prop_id)*('['! INTEGER_LITERAL_DECIMAL ']'!)?;
+		self_read_decl	-> 'SELF\\'prop_id('.'prop_id)*('['! INTEGER_LITERAL_DECIMAL ']'!)?;
 		prop_decl	-> prop_id ':'! 'OPTIONAL'? type_id ';'!;
 		where_decl	-> 'WHERE'! (rule_id ':'! or_exp ';'!)*;
 		or_exp		-> and_exp | or_exp 'OR'! and_exp;
@@ -48,7 +48,7 @@
 		comp_exp	-> comp_opd comp_op comp_opd;
 		comp_opd	-> access_opd | typeof_opd | '('! comp_opd ')'!;
 		typeof_opd	-> 'TYPEOF'! '('! access_opd ')'!;
-		access_opd	-> literal | prop_id | 'SELF' | ('SELF\\'prop_id | prop_id)('.'prop_id)*('['! INTEGER_LITERAL_DECIMAL ']'!)? ;
+		access_opd	-> literal | attr_read_exp ;
 		comp_op		-> eq_op | num_op | in_op; //all comparison symbol
 		eq_op		-> '=' | ':<>:';
 		in_op		-> 'IN';
