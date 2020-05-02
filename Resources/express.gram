@@ -13,10 +13,6 @@
 		WHITE_SPACE -> U+0020 | U+0009 | U+000B | U+000C;
 		SEPARATOR   -> (WHITE_SPACE | NEW_LINE)+;
 		IDENTIFIER	-> [a-zA-Z_][a-zA-Z0-9_]*;
-		//SCHEMA_ID	-> [a-zA-Z_][a-zA-Z0-9_]*;
-		//TYPE_ID		-> [a-zA-Z_][a-zA-Z0-9_]*;
-		//PROPERTY_ID	-> [a-zA-Z_][a-zA-Z0-9_]*;
-		//ATTRIBUTE_ID	-> [a-zA-Z_][a-zA-Z0-9_]*;
 		ANNOTATION	-> '(*' (.* - (.* '*)' .*)) '*)';
 		INTEGER_LITERAL_DECIMAL -> ('0' | [1-9] [0-9]*) ([Uu] [Ll]? | [Ll] [Uu]? )? ;
 		INTEGER_LITERAL_HEXA	-> '0' [xX] [a-fA-F0-9]+ ([Uu] [Ll]? | [Ll] [Uu]? )? ;
@@ -29,40 +25,44 @@
 		root		-> comment_exp* schema_body;
 		comment_exp -> ANNOTATION;
 		schema_body -> schema_decl (comment_exp | use_decl | type_decl | entity_decl)*;
-		use_decl	-> 'USE'! 'FROM'! IDENTIFIER ';'!;
-		schema_decl -> 'SCHEMA'! IDENTIFIER ';'!;
-		type_decl	-> 'TYPE'! IDENTIFIER '='! (select_decl | pt_keyword) ';'! where_decl? 'END_TYPE'! ';'!;
-		select_decl	-> 'SELECT'! '('! IDENTIFIER (','! IDENTIFIER)* ')'!;
-		entity_decl	-> 'ENTITY'! IDENTIFIER abstract_decl? subtype_decl? supertype_decl? ';'! prop_decl* where_decl? 'END_ENTITY'! ';'!;
+		use_decl	-> 'USE'! 'FROM'! schema_id ';'!;
+		schema_decl -> 'SCHEMA'! schema_id ';'!;
+		type_decl	-> 'TYPE'! entity_id '='! (select_decl | pt_keyword) ';'! where_decl? 'END_TYPE'! ';'!;
+		select_decl	-> 'SELECT'! '('! entity_id (','! entity_id)* ')'!;
+		entity_decl	-> 'ENTITY'! entity_id abstract_decl? subtype_decl? supertype_decl? ';'! prop_decl* where_decl? 'END_ENTITY'! ';'!;
 		abstract_decl	-> 'ABSTRACT';
-		supertype_decl	-> 'SUBTYPE'! 'OF'! '('! IDENTIFIER (','! IDENTIFIER)* ')'!;
+		supertype_decl	-> 'SUBTYPE'! 'OF'! '('! entity_id (','! entity_id)* ')'!;
 		subtype_decl	-> 'SUPERTYPE'! 'OF'! '('! selector_exp ')'!;
 		//derive_decl	-> derive_head_decl* 'DERIVE'! derive_body_decl+;
 		//derive_head_decl	-> IDENTIFIER ':'! IDENTIFIER ';'!;
 		//derive_body_decl	-> att_read_decl ':'! IDENTIFIER ':='! att_read_decl ';';
 		//att_read_decl	-> ('SELF\\'IDENTIFIER | IDENTIFIER)('.'IDENTIFIER)*('['! INTEGER_LITERAL_DECIMAL ']'!)?;
-		prop_decl	-> IDENTIFIER ':'! 'OPTIONAL'? type_id ';'!;
-		where_decl	-> 'WHERE'! (IDENTIFIER ':'! or_exp ';'!)*;
+		prop_decl	-> prop_id ':'! 'OPTIONAL'? type_id ';'!;
+		where_decl	-> 'WHERE'! (rule_id ':'! or_exp ';'!)*;
 		or_exp		-> and_exp | or_exp 'OR'! and_exp;
 		and_exp		-> unary_exp | and_exp 'AND'! unary_exp;
 		unary_exp	-> 'NOT'? atom_exp;
 		atom_exp	-> exists_exp | comp_exp | limits_exp | '('! or_exp ')'!;
-		exists_exp	-> 'EXISTS'^ '('! IDENTIFIER ')'!;
+		exists_exp	-> 'EXISTS'^ '('! prop_id ')'!;
 		limits_exp	-> '{'! numeric_lit lt_comp_op 'SELF' lt_comp_op numeric_lit '}'!;
 		comp_exp	-> comp_opd comp_op comp_opd;
 		comp_opd	-> access_opd | typeof_opd | '('! comp_opd ')'!;
 		typeof_opd	-> 'TYPEOF'! '('! access_opd ')'!;
-		access_opd	-> literal | IDENTIFIER | 'SELF' | ('SELF\\'IDENTIFIER | IDENTIFIER)('.'IDENTIFIER)*('['! INTEGER_LITERAL_DECIMAL ']'!)? ;
+		access_opd	-> literal | prop_id | 'SELF' | ('SELF\\'prop_id | prop_id)('.'prop_id)*('['! INTEGER_LITERAL_DECIMAL ']'!)? ;
 		comp_op		-> eq_op | num_op | in_op; //all comparison symbol
 		eq_op		-> '=' | ':<>:';
 		in_op		-> 'IN';
 		num_op		-> lt_comp_op | gt_comp_op; //Numerical comparison symbols
 		lt_comp_op	-> '<' | '<='; //liter or equal comparison
 		gt_comp_op	-> '>=' | '>'; //greater or equal comparison
-		selector_exp	-> 'ONEOF' '('! IDENTIFIER (','! IDENTIFIER)+ ')'!;
-		type_id		-> (IDENTIFIER | pt_keyword)^;
+		selector_exp	-> 'ONEOF' '('! entity_id (','! entity_id)+ ')'!;
+		type_id		-> (entity_id | pt_keyword)^;
 		pt_keyword	-> 'STRING' | 'NUMBER' | 'BOOLEAN' | 'LOGICAL' | 'BINARY' | 'INTEGER' | 'REAL'; //Primitive type keywords
 		literal		-> 'true' | 'false' | numeric_lit | STRING_LITERAL;
 		numeric_lit	-> INTEGER_LITERAL_DECIMAL | INTEGER_LITERAL_HEXA | REAL_LITERAL;
+		schema_id	-> IDENTIFIER;
+		entity_id	-> IDENTIFIER;
+		prop_id		-> IDENTIFIER;
+		rule_id		-> IDENTIFIER;
 	}
 }

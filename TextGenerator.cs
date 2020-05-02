@@ -73,7 +73,8 @@ namespace Express_Parser
         }
         private void ProcessType(ASTNode node)
         {
-            string name = node.Children[0].Value;
+            ASTNode nameNode = node.Children[0];
+            string name = nameNode.Children[0].Value;
             for (int i = 1; i < node.Children.Count; i++)
             {
                 switch (node.Children[i].Symbol.ID)
@@ -92,9 +93,11 @@ namespace Express_Parser
         private void ProcessSelectType(string name, ASTNode node)
         {
             SelectType type = new SelectType(name);
+            ASTNode nameNode;
             for (int i = 1; i < node.Children.Count; i++)
             {
-                type.AddType(node.Children[i].Value);
+                nameNode = node.Children[i];
+                type.AddType(nameNode.Children[0].Value);
             }
             this.schema.AddSelectType(type);
         }
@@ -104,7 +107,8 @@ namespace Express_Parser
         }
         private void ProcessEntity(ASTNode node)
         {
-            Entity entity = new Entity(node.Children[0].Value);
+            ASTNode nameNode = node.Children[0];
+            Entity entity = new Entity(nameNode.Children[0].Value);
             for (int i = 1; i < node.Children.Count; i++)
             {
                 switch(node.Children[i].Symbol.ID)
@@ -122,7 +126,7 @@ namespace Express_Parser
                         this.ProcessSubTypes(entity, node.Children[i]);
                         break;
                     default:
-                        this.ProcessAttribute(entity, node.Children[i]);
+                        this.ProcessProperty(entity, node.Children[i]);
                         break;
                 }
             }
@@ -130,36 +134,41 @@ namespace Express_Parser
         }
         private void ProcessInheritance(Entity owner, ASTNode node)
         {
+            ASTNode nameNode;
             for (int i = 0; i < node.Children.Count; i++)
             {
-                owner.AddSuperType(node.Children[i].Value);
+                nameNode = node.Children[i];
+                owner.AddSuperType(nameNode.Children[0].Value);
             }
         }
         private void ProcessSubTypes(Entity owner, ASTNode node)
         {
             ASTNode selector = node.Children[0];
+            ASTNode nameNode;
             //Only the case "oneof" is considered here
             for (int i = 1; i < selector.Children.Count; i++)
             {
-                owner.AddDisjointUnion(selector.Children[i].Value);
+                nameNode = selector.Children[i];
+                owner.AddDisjointUnion(nameNode.Children[0].Value);
             }
         }
-        private void ProcessAttribute(Entity owner, ASTNode node)
+        private void ProcessProperty(Entity owner, ASTNode node)
         {
-            Express_Model.Attribute attribute = new Express_Model.Attribute(node.Children[0].Value, owner);
+            ASTNode nameNode = node.Children[0];
+            Property property = new Property(nameNode.Children[0].Value, owner);
             ASTNode type;
             if (node.Children.Count == 3)
             {
-                attribute.Optional = true;
+                property.Optional = true;
                 type = node.Children[2];
             }
             else
             {
-                attribute.Optional = false;
+                property.Optional = false;
                 type = node.Children[1];
             }
-            attribute.AType = (type.Children.Count == 0) ? type.Value : type.Children[0].Value;
-            owner.AddAttribute(attribute);
+            property.PType = (type.Children.Count == 0) ? type.Value : type.Children[0].Value;
+            owner.AddProperty(property);
         }
     }
 }

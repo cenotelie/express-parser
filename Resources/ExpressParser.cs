@@ -158,6 +158,22 @@ namespace Express
 			/// The unique identifier for variable numeric_lit
 			/// </summary>
 			public const int VariableNumericLit = 0x002D;
+			/// <summary>
+			/// The unique identifier for variable schema_id
+			/// </summary>
+			public const int VariableSchemaId = 0x002E;
+			/// <summary>
+			/// The unique identifier for variable entity_id
+			/// </summary>
+			public const int VariableEntityId = 0x002F;
+			/// <summary>
+			/// The unique identifier for variable prop_id
+			/// </summary>
+			public const int VariablePropId = 0x0030;
+			/// <summary>
+			/// The unique identifier for variable rule_id
+			/// </summary>
+			public const int VariableRuleId = 0x0031;
 		}
 		/// <summary>
 		/// The collection of variables matched by this parser
@@ -201,15 +217,19 @@ namespace Express
 			new Symbol(0x002B, "pt_keyword"), 
 			new Symbol(0x002C, "literal"), 
 			new Symbol(0x002D, "numeric_lit"), 
-			new Symbol(0x002E, "__V46"), 
-			new Symbol(0x002F, "__V47"), 
-			new Symbol(0x003A, "__V58"), 
-			new Symbol(0x003D, "__V61"), 
-			new Symbol(0x0042, "__V66"), 
-			new Symbol(0x0047, "__V71"), 
-			new Symbol(0x0052, "__V82"), 
-			new Symbol(0x005C, "__V92"), 
-			new Symbol(0x0066, "__VAxiom") };
+			new Symbol(0x002E, "schema_id"), 
+			new Symbol(0x002F, "entity_id"), 
+			new Symbol(0x0030, "prop_id"), 
+			new Symbol(0x0031, "rule_id"), 
+			new Symbol(0x0032, "__V50"), 
+			new Symbol(0x0033, "__V51"), 
+			new Symbol(0x003E, "__V62"), 
+			new Symbol(0x0041, "__V65"), 
+			new Symbol(0x0046, "__V70"), 
+			new Symbol(0x004B, "__V75"), 
+			new Symbol(0x0056, "__V86"), 
+			new Symbol(0x0060, "__V96"), 
+			new Symbol(0x006A, "__VAxiom") };
 		/// <summary>
 		/// The collection of virtuals matched by this parser
 		/// </summary>
@@ -273,6 +293,10 @@ namespace Express
 			public virtual void OnVariablePtKeyword(ASTNode node) {}
 			public virtual void OnVariableLiteral(ASTNode node) {}
 			public virtual void OnVariableNumericLit(ASTNode node) {}
+			public virtual void OnVariableSchemaId(ASTNode node) {}
+			public virtual void OnVariableEntityId(ASTNode node) {}
+			public virtual void OnVariablePropId(ASTNode node) {}
+			public virtual void OnVariableRuleId(ASTNode node) {}
 		}
 
 		/// <summary>
@@ -335,6 +359,10 @@ namespace Express
 				case 0x002B: visitor.OnVariablePtKeyword(node); break;
 				case 0x002C: visitor.OnVariableLiteral(node); break;
 				case 0x002D: visitor.OnVariableNumericLit(node); break;
+				case 0x002E: visitor.OnVariableSchemaId(node); break;
+				case 0x002F: visitor.OnVariableEntityId(node); break;
+				case 0x0030: visitor.OnVariablePropId(node); break;
+				case 0x0031: visitor.OnVariableRuleId(node); break;
 			}
 		}
 	}

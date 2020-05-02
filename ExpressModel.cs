@@ -129,7 +129,7 @@ namespace Express_Model
     {
         private List<string> disjointUnion = new List<string>();
         private List<string> superTypes = new List<string>();
-        private List<Attribute> attributes = new List<Attribute>();
+        private List<Property> properties = new List<Property>();
         
         public Entity(string name): base(name) 
         {
@@ -152,9 +152,9 @@ namespace Express_Model
         {
             this.superTypes.Add(type);
         }
-        public void AddAttribute(Attribute attribute)
+        public void AddProperty(Property property)
         {
-            this.attributes.Add(attribute);
+            this.properties.Add(property);
         }
         public void GenerateOWl(TextWriter writer)
         {
@@ -172,20 +172,20 @@ namespace Express_Model
                 writer.WriteLine($"SubClassOf(:{this.Name} :{super})");
             }
             //Attributes
-            foreach (Attribute attribute in this.attributes)
+            foreach (Property property in this.properties)
             {
-                attribute.TypeDef = this.TypeDef;
-                attribute.GenerateOWl(writer);
+                property.TypeDef = this.TypeDef;
+                property.GenerateOWl(writer);
             }
         }
     }
-    public class Attribute : NamedElement, IOwlGeneration
+    public class Property : NamedElement, IOwlGeneration
     {
-        public Attribute(string name, Entity owner): base(name) 
+        public Property(string name, Entity owner): base(name) 
         {
             this.Owner = owner;
         }
-        public Attribute() : base(null) { }
+        public Property() : base(null) { }
         public Entity Owner
         {
             get; set;
@@ -198,18 +198,18 @@ namespace Express_Model
         {
             get; set;
         }
-        public string AType
+        public string PType
         {
             get; set;
         }
         public void GenerateOWl(TextWriter writer)
         {
-            if (Schema.primitiveTypes.Contains(this.AType) || this.TypeDef.Contains(this.AType))
+            if (Schema.primitiveTypes.Contains(this.PType) || this.TypeDef.Contains(this.PType))
             {
-                this.ProcessPrimitiveAttribute(writer, Owner.Name, this.Name, this.Optional, this.AType);
+                this.ProcessPrimitiveAttribute(writer, Owner.Name, this.Name, this.Optional, this.PType);
                 return;
             }
-            this.ProcessReferenceAttribute(writer, Owner.Name, this.Name, this.Optional, this.AType);
+            this.ProcessReferenceAttribute(writer, Owner.Name, this.Name, this.Optional, this.PType);
         }
         private void ProcessPrimitiveAttribute(TextWriter writer, string entityName, string name, bool optional, string type)
         {
