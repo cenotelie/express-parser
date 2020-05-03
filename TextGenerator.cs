@@ -125,8 +125,10 @@ namespace Express_Parser
                     case ExpressParser.ID.VariableWhereDecl:
                         this.ProcessSubTypes(entity, node.Children[i]);
                         break;
-                    default:
+                    case ExpressParser.ID.VariablePropDecl:
                         this.ProcessProperty(entity, node.Children[i]);
+                        break;
+                    default:
                         break;
                 }
             }
@@ -154,20 +156,41 @@ namespace Express_Parser
         }
         private void ProcessProperty(Entity owner, ASTNode node)
         {
-            ASTNode nameNode = node.Children[0];
-            Property property = new Property(nameNode.Children[0].Value, owner);
+            ASTNode propNode = node.Children[0];
+            string name;
+            List<string> propsChain = new List<string>();
+            ASTNode child;
+            for (int i = 0; i < propNode.Children.Count; i++)
+            {
+                child = propNode.Children[i];
+                switch (child.Symbol.ID)
+                {
+                    case ExpressParser.ID.VariablePropId:
+                        propsChain.Add(child.Children[0].Value);
+                        break;
+                    default:
+                        break;
+                }
+            }
+            if (propsChain.Count == 1) name = propsChain[0];
+            else return; //FIXME: process chaining of props or SELF
+            Property property = new Property(name, owner);
             ASTNode type;
-            if (node.Children.Count == 3)
+            for (int i = 1; i < node.Children.Count; i++)
             {
-                property.Optional = true;
-                type = node.Children[2];
+                switch (node.Children[i].Symbol.ID)
+                {
+                    case ExpressParser.ID.VariableOptionalDecl:
+                        property.Optional = true;
+                        break;
+                    case ExpressParser.ID.VariableSelectOrEntityId:
+                        type = node.Children[i];
+                        property.PType = type.Children[0].Value;
+                        break;
+                    default:
+                        break;
+                }
             }
-            else
-            {
-                property.Optional = false;
-                type = node.Children[1];
-            }
-            property.PType = (type.Children.Count == 0) ? type.Value : type.Children[0].Value;
             owner.AddProperty(property);
         }
     }

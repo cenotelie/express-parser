@@ -44,21 +44,25 @@ namespace Express
 			/// </summary>
 			public const int TerminalAnnotation = 0x0007;
 			/// <summary>
+			/// The unique identifier for terminal INLINE_ANNOTATION
+			/// </summary>
+			public const int TerminalInlineAnnotation = 0x0008;
+			/// <summary>
 			/// The unique identifier for terminal INTEGER_LITERAL_DECIMAL
 			/// </summary>
-			public const int TerminalIntegerLiteralDecimal = 0x0008;
+			public const int TerminalIntegerLiteralDecimal = 0x0009;
 			/// <summary>
 			/// The unique identifier for terminal INTEGER_LITERAL_HEXA
 			/// </summary>
-			public const int TerminalIntegerLiteralHexa = 0x0009;
+			public const int TerminalIntegerLiteralHexa = 0x000A;
 			/// <summary>
 			/// The unique identifier for terminal REAL_LITERAL
 			/// </summary>
-			public const int TerminalRealLiteral = 0x000A;
+			public const int TerminalRealLiteral = 0x000B;
 			/// <summary>
 			/// The unique identifier for terminal STRING_LITERAL
 			/// </summary>
-			public const int TerminalStringLiteral = 0x000B;
+			public const int TerminalStringLiteral = 0x000C;
 		}
 		/// <summary>
 		/// Contains the constant IDs for the contexts for this lexer
@@ -85,35 +89,36 @@ namespace Express
 			new Symbol(0x0005, "SEPARATOR"),
 			new Symbol(0x0006, "IDENTIFIER"),
 			new Symbol(0x0007, "ANNOTATION"),
-			new Symbol(0x0008, "INTEGER_LITERAL_DECIMAL"),
-			new Symbol(0x0009, "INTEGER_LITERAL_HEXA"),
-			new Symbol(0x000A, "REAL_LITERAL"),
-			new Symbol(0x000B, "STRING_LITERAL"),
-			new Symbol(0x0038, "USE"),
-			new Symbol(0x0039, "FROM"),
-			new Symbol(0x003A, ";"),
-			new Symbol(0x003B, "SCHEMA"),
-			new Symbol(0x003C, "TYPE"),
-			new Symbol(0x003D, "="),
-			new Symbol(0x003E, "END_TYPE"),
-			new Symbol(0x003F, "SELECT"),
-			new Symbol(0x0040, "("),
-			new Symbol(0x0041, ","),
-			new Symbol(0x0043, ")"),
-			new Symbol(0x0044, "ENTITY"),
-			new Symbol(0x0046, "END_ENTITY"),
-			new Symbol(0x0047, "ABSTRACT"),
-			new Symbol(0x0048, "SUBTYPE"),
-			new Symbol(0x0049, "OF"),
-			new Symbol(0x004B, "SUPERTYPE"),
-			new Symbol(0x004C, "DERIVE"),
-			new Symbol(0x004D, ":"),
-			new Symbol(0x004E, ":="),
-			new Symbol(0x004F, "SELF"),
-			new Symbol(0x0050, "SELF\\"),
-			new Symbol(0x0051, "."),
-			new Symbol(0x0053, "["),
-			new Symbol(0x0054, "]"),
+			new Symbol(0x0008, "INLINE_ANNOTATION"),
+			new Symbol(0x0009, "INTEGER_LITERAL_DECIMAL"),
+			new Symbol(0x000A, "INTEGER_LITERAL_HEXA"),
+			new Symbol(0x000B, "REAL_LITERAL"),
+			new Symbol(0x000C, "STRING_LITERAL"),
+			new Symbol(0x0039, "USE"),
+			new Symbol(0x003A, "FROM"),
+			new Symbol(0x003B, ";"),
+			new Symbol(0x003C, "SCHEMA"),
+			new Symbol(0x003D, "TYPE"),
+			new Symbol(0x003E, "="),
+			new Symbol(0x003F, "END_TYPE"),
+			new Symbol(0x0040, "SELECT"),
+			new Symbol(0x0041, "("),
+			new Symbol(0x0042, ","),
+			new Symbol(0x0044, ")"),
+			new Symbol(0x0045, "ENTITY"),
+			new Symbol(0x0047, "END_ENTITY"),
+			new Symbol(0x0048, "ABSTRACT"),
+			new Symbol(0x0049, "SUBTYPE"),
+			new Symbol(0x004A, "OF"),
+			new Symbol(0x004C, "SUPERTYPE"),
+			new Symbol(0x004D, "DERIVE"),
+			new Symbol(0x004F, ":"),
+			new Symbol(0x0050, ":="),
+			new Symbol(0x0051, "SELF"),
+			new Symbol(0x0052, "SELF\\"),
+			new Symbol(0x0053, "."),
+			new Symbol(0x0055, "["),
+			new Symbol(0x0056, "]"),
 			new Symbol(0x0057, "OPTIONAL"),
 			new Symbol(0x0058, "WHERE"),
 			new Symbol(0x005A, "OR"),
