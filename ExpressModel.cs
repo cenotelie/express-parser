@@ -98,7 +98,11 @@ namespace Express_Model
                 this.defTypes.TryGetValue(e.Key, out type);
                 writer.WriteLine($"DatatypeDefinition(:{e.Key} {Schema.GetPrimitiveType(type)})");
             }
-            foreach(SelectType type in this.selectTypes)
+            foreach (KeyValuePair<string, string> e in this.equivalentClasses)
+            {
+                writer.WriteLine($"EquivalentClasses(:{e.Key} :{e.Value})");
+            }
+                foreach (SelectType type in this.selectTypes)
             {
                 type.GenerateOWl(writer);
             }
