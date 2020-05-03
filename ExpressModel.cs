@@ -28,6 +28,7 @@ namespace Express_Model
         private Dictionary<string, string> defTypes = new Dictionary<string, string>();
         private List<SelectType> selectTypes = new List<SelectType>();
         private List<Entity> entities = new List<Entity>();
+        private Dictionary<string, string> equivalentClasses = new Dictionary<string, string>();
         public Schema(string schemaBase): base(null) 
         {
             this.schemaBase = schemaBase;
@@ -73,6 +74,10 @@ namespace Express_Model
         public void AddEntity(Entity entity)
         {
             this.entities.Add(entity);
+        }
+        public void AddEquivalentClasses(string cl1, string cl2)
+        {
+            this.equivalentClasses.Add(cl1, cl2);
         }
         public void GenerateOWl(TextWriter writer)
         {

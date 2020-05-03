@@ -85,7 +85,7 @@ namespace Express_Parser
                     case ExpressParser.ID.VariableWhereDecl:
                         break;
                     default:
-                        this.ProcessPrimitiveType(name, node.Children[1]);
+                        this.ProcessPropertyExp(name, node.Children[1]);
                         break;
                 }
             }
@@ -101,9 +101,23 @@ namespace Express_Parser
             }
             this.schema.AddSelectType(type);
         }
-        private void ProcessPrimitiveType(string name, ASTNode node)
+        private void ProcessPropertyExp(string name, ASTNode node)
         {
-            this.schema.AddDefType(name, node.Children[0].Value);
+            ASTNode type;
+            if (node.Children.Count == 1)
+            {
+                type = node.Children[0];
+                if (type.Symbol.ID == ExpressParser.ID.VariablePtKeyword)
+                {
+                    this.schema.AddDefType(name, node.Children[0].Children[0].Value);
+                } 
+                else
+                {
+                    this.schema.AddEquivalentClasses(name, node.Children[0].Children[0].Value);
+                }
+            }
+            else
+                return; //TODO: process collections;
         }
         private void ProcessEntity(ASTNode node)
         {
@@ -183,9 +197,14 @@ namespace Express_Parser
                     case ExpressParser.ID.VariableOptionalDecl:
                         property.Optional = true;
                         break;
-                    case ExpressParser.ID.VariableSelectOrEntityId:
+                    case ExpressParser.ID.VariablePropExp:
                         type = node.Children[i];
-                        property.PType = type.Children[0].Value;
+                        if (type.Children.Count == 1)
+                        {
+                            property.PType = type.Children[0].Children[0].Value;
+                        }
+                        else
+                            return; //TODO: process collections;
                         break;
                     default:
                         break;
@@ -193,5 +212,6 @@ namespace Express_Parser
             }
             owner.AddProperty(property);
         }
+
     }
 }
