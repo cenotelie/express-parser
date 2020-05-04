@@ -6,7 +6,7 @@ namespace Express_Model
 {
     interface IOwlGeneration
     {
-        void GenerateOWl(TextWriter writer);
+        void GenerateOWL(TextWriter writer);
     }
     public abstract class NamedElement
     {
@@ -79,7 +79,7 @@ namespace Express_Model
         {
             this.equivalentClasses.Add(cl1, cl2);
         }
-        public void GenerateOWl(TextWriter writer)
+        public void GenerateOWL(TextWriter writer)
         {
             writer.WriteLine("Prefix(owl:=<http://www.w3.org/2002/07/owl#>)");
             writer.WriteLine("Prefix(rdf:=<http://www.w3.org/1999/02/22-rdf-syntax-ns#>)");
@@ -104,13 +104,13 @@ namespace Express_Model
             }
                 foreach (SelectType type in this.selectTypes)
             {
-                type.GenerateOWl(writer);
+                type.GenerateOWL(writer);
             }
             List<string> defList = new List<string>(this.defTypes.Keys);
             foreach(Entity entity in this.entities)
             {
                 entity.TypeDef = defList;
-                entity.GenerateOWl(writer);
+                entity.GenerateOWL(writer);
             }
             writer.WriteLine(")");
         }
@@ -124,7 +124,7 @@ namespace Express_Model
         {
             this.types.Add(type);
         }
-        public void GenerateOWl(TextWriter writer)
+        public void GenerateOWL(TextWriter writer)
         {
             writer.WriteLine($"EquivalentClasses(:{this.Name} ObjectUnionOf(");
             foreach(string type in this.types)
@@ -165,7 +165,7 @@ namespace Express_Model
         {
             this.properties.Add(property);
         }
-        public void GenerateOWl(TextWriter writer)
+        public void GenerateOWL(TextWriter writer)
         {
             writer.WriteLine($"Declaration(Class(:{this.Name}))");
             //sub types
@@ -184,7 +184,7 @@ namespace Express_Model
             foreach (Property property in this.properties)
             {
                 property.TypeDef = this.TypeDef;
-                property.GenerateOWl(writer);
+                property.GenerateOWL(writer);
             }
         }
     }
@@ -211,7 +211,7 @@ namespace Express_Model
         {
             get; set;
         }
-        public void GenerateOWl(TextWriter writer)
+        public void GenerateOWL(TextWriter writer)
         {
             if (Schema.primitiveTypes.Contains(this.PType) || this.TypeDef.Contains(this.PType))
             {

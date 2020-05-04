@@ -1,10 +1,7 @@
 ﻿using Hime.Redist;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.IO;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using Express_Model;
 using Express;
 
@@ -33,7 +30,7 @@ namespace Express_Parser
         }
         public void GenerateOWl()
         {
-            this.schema.GenerateOWl(this.writer);
+            this.schema.GenerateOWL(this.writer);
             this.writer.Close();
             if (debug) Console.ReadKey();
         }
