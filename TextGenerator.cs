@@ -76,6 +76,9 @@ namespace Express_Parser
             {
                 switch (node.Children[i].Symbol.ID)
                 {
+                    case ExpressParser.ID.VariableEnumDecl:
+                        this.ProcessEnumeration(name, node.Children[1]);
+                        break;
                     case ExpressParser.ID.VariableSelectDecl:
                         this.ProcessSelectType(name, node.Children[1]);
                         break;
@@ -86,6 +89,17 @@ namespace Express_Parser
                         break;
                 }
             }
+        }
+        private void ProcessEnumeration(string name, ASTNode node)
+        {
+            Enumeration enumeration = new Enumeration(name);
+            ASTNode nameNode;
+            for (int i = 1; i < node.Children.Count; i++)
+            {
+                nameNode = node.Children[i];
+                enumeration.AddLiteral(nameNode.Children[0].Value);
+            }
+            this.schema.AddEnumeration(enumeration);
         }
         private void ProcessSelectType(string name, ASTNode node)
         {

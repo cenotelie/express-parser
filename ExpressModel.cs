@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace Express_Model
 {
@@ -26,6 +27,7 @@ namespace Express_Model
         private string schemaBase;
         private List<string> imports = new List<string>();
         private Dictionary<string, string> defTypes = new Dictionary<string, string>();
+        private List<Enumeration> enumerations = new List<Enumeration>();
         private List<SelectType> selectTypes = new List<SelectType>();
         private List<Entity> entities = new List<Entity>();
         private Dictionary<string, string> equivalentClasses = new Dictionary<string, string>();
@@ -67,6 +69,10 @@ namespace Express_Model
         {
             this.defTypes.Add(def, type);
         }
+        public void AddEnumeration(Enumeration enumeration)
+        {
+            this.enumerations.Add(enumeration);
+        }
         public void AddSelectType(SelectType type)
         {
             this.selectTypes.Add(type);
@@ -107,12 +113,37 @@ namespace Express_Model
                 type.GenerateOWL(writer);
             }
             List<string> defList = new List<string>(this.defTypes.Keys);
+            foreach(Enumeration enumeration in this.enumerations)
+            {
+                enumeration.GenerateOWL(writer);
+            }
             foreach(Entity entity in this.entities)
             {
                 entity.TypeDef = defList;
                 entity.GenerateOWL(writer);
             }
             writer.WriteLine(")");
+        }
+    }
+    public class Enumeration : NamedElement, IOwlGeneration
+    {
+        private List<string> literals = new List<string>();
+        public Enumeration(string name): base(name) { }
+        public void AddLiteral(string literal)
+        {
+            this.literals.Add(literal);
+        }
+        public void GenerateOWL(TextWriter writer)
+        {
+            writer.WriteLine($"Declaration(Class(:{this.Name}))");
+            StringBuilder builder = new StringBuilder($"EquivalentClasses(:{this.Name} ObjectOneOf(");
+            foreach(string literal in this.literals)
+            {
+                builder.Append($":{literal} ");
+                writer.WriteLine($"ClassAssertion(:{this.Name} :{literal})");
+            }
+            builder.Append("))");
+            writer.WriteLine(builder.ToString());
         }
     }
     public class SelectType : NamedElement, IOwlGeneration
