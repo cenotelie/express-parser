@@ -105,7 +105,7 @@ namespace Express_Parser
         {
             SelectType type = new SelectType(name);
             ASTNode nameNode;
-            for (int i = 1; i < node.Children.Count; i++)
+            for (int i = 0; i < node.Children.Count; i++)
             {
                 nameNode = node.Children[i];
                 type.AddType(nameNode.Children[0].Value);
@@ -148,7 +148,6 @@ namespace Express_Parser
                         this.ProcessInheritance(entity, node.Children[i]);
                         break;
                     case ExpressParser.ID.VariableWhereDecl:
-                        this.ProcessSubTypes(entity, node.Children[i]);
                         break;
                     case ExpressParser.ID.VariablePropDecl:
                         this.ProcessProperty(entity, node.Children[i]);
@@ -210,8 +209,10 @@ namespace Express_Parser
                         break;
                     case ExpressParser.ID.VariablePropExp:
                         type = node.Children[i];
-                        if (type.Children.Count == 1)
+                        //FIXME: process collections
+                        if (type.Children.Count == 1 && type.Children[0].Symbol.ID != ExpressParser.ID.VariableSetExp)
                         {
+
                             property.PType = type.Children[0].Children[0].Value;
                         }
                         else

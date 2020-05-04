@@ -16,7 +16,7 @@ namespace Express_Parser
             ExpressLexer lexer = new ExpressLexer(text);
             ExpressParser parser = new ExpressParser(lexer);
             ParseResult res = parser.Parse();
-            TextGenerator generator = new TextGenerator(res.Root, args[0], args[2], true);
+            TextGenerator generator = new TextGenerator(res.Root, args[0], args[2], false);
             generator.GenerateSchema();
             generator.GenerateOWl();
         }
