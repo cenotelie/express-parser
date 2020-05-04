@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="OwlGenerator.cs" />
     <Compile Include="ExpressModel.cs" />
     <Compile Include="TextGenerator.cs" />
     <Compile Include="ExpressLexer.cs" />
