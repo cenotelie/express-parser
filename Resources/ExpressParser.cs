@@ -167,81 +167,101 @@ namespace Express
 			/// </summary>
 			public const int VariableCompOpd = 0x0030;
 			/// <summary>
+			/// The unique identifier for variable function_call_exp
+			/// </summary>
+			public const int VariableFunctionCallExp = 0x0031;
+			/// <summary>
+			/// The unique identifier for variable function_params_exp
+			/// </summary>
+			public const int VariableFunctionParamsExp = 0x0032;
+			/// <summary>
 			/// The unique identifier for variable typeof_opd
 			/// </summary>
-			public const int VariableTypeofOpd = 0x0031;
+			public const int VariableTypeofOpd = 0x0033;
 			/// <summary>
 			/// The unique identifier for variable usedin_opd
 			/// </summary>
-			public const int VariableUsedinOpd = 0x0032;
+			public const int VariableUsedinOpd = 0x0034;
 			/// <summary>
 			/// The unique identifier for variable access_opd
 			/// </summary>
-			public const int VariableAccessOpd = 0x0033;
+			public const int VariableAccessOpd = 0x0035;
 			/// <summary>
 			/// The unique identifier for variable sizeof_opd
 			/// </summary>
-			public const int VariableSizeofOpd = 0x0034;
+			public const int VariableSizeofOpd = 0x0036;
 			/// <summary>
 			/// The unique identifier for variable comp_op
 			/// </summary>
-			public const int VariableCompOp = 0x0035;
+			public const int VariableCompOp = 0x0037;
 			/// <summary>
 			/// The unique identifier for variable eq_op
 			/// </summary>
-			public const int VariableEqOp = 0x0036;
+			public const int VariableEqOp = 0x0038;
 			/// <summary>
 			/// The unique identifier for variable in_op
 			/// </summary>
-			public const int VariableInOp = 0x0037;
+			public const int VariableInOp = 0x0039;
 			/// <summary>
 			/// The unique identifier for variable num_op
 			/// </summary>
-			public const int VariableNumOp = 0x0038;
+			public const int VariableNumOp = 0x003A;
 			/// <summary>
 			/// The unique identifier for variable lt_comp_op
 			/// </summary>
-			public const int VariableLtCompOp = 0x0039;
+			public const int VariableLtCompOp = 0x003B;
 			/// <summary>
 			/// The unique identifier for variable gt_comp_op
 			/// </summary>
-			public const int VariableGtCompOp = 0x003A;
+			public const int VariableGtCompOp = 0x003C;
 			/// <summary>
-			/// The unique identifier for variable selector_exp
+			/// The unique identifier for variable oneof_exp
 			/// </summary>
-			public const int VariableSelectorExp = 0x003B;
+			public const int VariableOneofExp = 0x003D;
+			/// <summary>
+			/// The unique identifier for variable andor_exp
+			/// </summary>
+			public const int VariableAndorExp = 0x003E;
+			/// <summary>
+			/// The unique identifier for variable str_concat_exp
+			/// </summary>
+			public const int VariableStrConcatExp = 0x003F;
 			/// <summary>
 			/// The unique identifier for variable type_id
 			/// </summary>
-			public const int VariableTypeId = 0x003C;
+			public const int VariableTypeId = 0x0040;
 			/// <summary>
 			/// The unique identifier for variable pt_keyword
 			/// </summary>
-			public const int VariablePtKeyword = 0x003D;
+			public const int VariablePtKeyword = 0x0041;
 			/// <summary>
 			/// The unique identifier for variable literal
 			/// </summary>
-			public const int VariableLiteral = 0x003E;
+			public const int VariableLiteral = 0x0042;
 			/// <summary>
 			/// The unique identifier for variable numeric_lit
 			/// </summary>
-			public const int VariableNumericLit = 0x003F;
+			public const int VariableNumericLit = 0x0043;
 			/// <summary>
 			/// The unique identifier for variable schema_id
 			/// </summary>
-			public const int VariableSchemaId = 0x0040;
+			public const int VariableSchemaId = 0x0044;
 			/// <summary>
 			/// The unique identifier for variable select_or_entity_id
 			/// </summary>
-			public const int VariableSelectOrEntityId = 0x0041;
+			public const int VariableSelectOrEntityId = 0x0045;
 			/// <summary>
 			/// The unique identifier for variable prop_id
 			/// </summary>
-			public const int VariablePropId = 0x0042;
+			public const int VariablePropId = 0x0046;
 			/// <summary>
 			/// The unique identifier for variable rule_id
 			/// </summary>
-			public const int VariableRuleId = 0x0043;
+			public const int VariableRuleId = 0x0047;
+			/// <summary>
+			/// The unique identifier for variable function_id
+			/// </summary>
+			public const int VariableFunctionId = 0x0048;
 		}
 		/// <summary>
 		/// The collection of variables matched by this parser
@@ -287,41 +307,56 @@ namespace Express
 			new Symbol(0x002E, "limits_exp"), 
 			new Symbol(0x002F, "comp_exp"), 
 			new Symbol(0x0030, "comp_opd"), 
-			new Symbol(0x0031, "typeof_opd"), 
-			new Symbol(0x0032, "usedin_opd"), 
-			new Symbol(0x0033, "access_opd"), 
-			new Symbol(0x0034, "sizeof_opd"), 
-			new Symbol(0x0035, "comp_op"), 
-			new Symbol(0x0036, "eq_op"), 
-			new Symbol(0x0037, "in_op"), 
-			new Symbol(0x0038, "num_op"), 
-			new Symbol(0x0039, "lt_comp_op"), 
-			new Symbol(0x003A, "gt_comp_op"), 
-			new Symbol(0x003B, "selector_exp"), 
-			new Symbol(0x003C, "type_id"), 
-			new Symbol(0x003D, "pt_keyword"), 
-			new Symbol(0x003E, "literal"), 
-			new Symbol(0x003F, "numeric_lit"), 
-			new Symbol(0x0040, "schema_id"), 
-			new Symbol(0x0041, "select_or_entity_id"), 
-			new Symbol(0x0042, "prop_id"), 
-			new Symbol(0x0043, "rule_id"), 
-			new Symbol(0x0044, "__V68"), 
-			new Symbol(0x0045, "__V69"), 
-			new Symbol(0x0050, "__V80"), 
-			new Symbol(0x0053, "__V83"), 
-			new Symbol(0x0057, "__V87"), 
-			new Symbol(0x005A, "__V90"), 
+			new Symbol(0x0031, "function_call_exp"), 
+			new Symbol(0x0032, "function_params_exp"), 
+			new Symbol(0x0033, "typeof_opd"), 
+			new Symbol(0x0034, "usedin_opd"), 
+			new Symbol(0x0035, "access_opd"), 
+			new Symbol(0x0036, "sizeof_opd"), 
+			new Symbol(0x0037, "comp_op"), 
+			new Symbol(0x0038, "eq_op"), 
+			new Symbol(0x0039, "in_op"), 
+			new Symbol(0x003A, "num_op"), 
+			new Symbol(0x003B, "lt_comp_op"), 
+			new Symbol(0x003C, "gt_comp_op"), 
+			new Symbol(0x003D, "oneof_exp"), 
+			new Symbol(0x003E, "andor_exp"), 
+			new Symbol(0x003F, "str_concat_exp"), 
+			new Symbol(0x0040, "type_id"), 
+			new Symbol(0x0041, "pt_keyword"), 
+			new Symbol(0x0042, "literal"), 
+			new Symbol(0x0043, "numeric_lit"), 
+			new Symbol(0x0044, "schema_id"), 
+			new Symbol(0x0045, "select_or_entity_id"), 
+			new Symbol(0x0046, "prop_id"), 
+			new Symbol(0x0047, "rule_id"), 
+			new Symbol(0x0048, "function_id"), 
+			new Symbol(0x0049, "__V73"), 
+			new Symbol(0x004A, "__V74"), 
+			new Symbol(0x0055, "__V85"), 
+			new Symbol(0x0058, "__V88"), 
+			new Symbol(0x0059, "__V89"), 
 			new Symbol(0x005D, "__V93"), 
-			new Symbol(0x0061, "__V97"), 
-			new Symbol(0x0062, "__V98"), 
+			new Symbol(0x0060, "__V96"), 
+			new Symbol(0x0063, "__V99"), 
+			new Symbol(0x0064, "__V100"), 
 			new Symbol(0x0067, "__V103"), 
+			new Symbol(0x0069, "__V105"), 
+			new Symbol(0x006A, "__V106"), 
+			new Symbol(0x006B, "__V107"), 
 			new Symbol(0x006C, "__V108"), 
-			new Symbol(0x006D, "__V109"), 
-			new Symbol(0x0074, "__V116"), 
-			new Symbol(0x007D, "__V125"), 
-			new Symbol(0x0089, "__V137"), 
-			new Symbol(0x0093, "__VAxiom") };
+			new Symbol(0x0071, "__V113"), 
+			new Symbol(0x0076, "__V118"), 
+			new Symbol(0x0077, "__V119"), 
+			new Symbol(0x007E, "__V126"), 
+			new Symbol(0x007F, "__V127"), 
+			new Symbol(0x0080, "__V128"), 
+			new Symbol(0x0087, "__V135"), 
+			new Symbol(0x008A, "__V138"), 
+			new Symbol(0x0097, "__V151"), 
+			new Symbol(0x0099, "__V153"), 
+			new Symbol(0x009B, "__V155"), 
+			new Symbol(0x00A5, "__VAxiom") };
 		/// <summary>
 		/// The collection of virtuals matched by this parser
 		/// </summary>
@@ -388,6 +423,8 @@ namespace Express
 			public virtual void OnVariableLimitsExp(ASTNode node) {}
 			public virtual void OnVariableCompExp(ASTNode node) {}
 			public virtual void OnVariableCompOpd(ASTNode node) {}
+			public virtual void OnVariableFunctionCallExp(ASTNode node) {}
+			public virtual void OnVariableFunctionParamsExp(ASTNode node) {}
 			public virtual void OnVariableTypeofOpd(ASTNode node) {}
 			public virtual void OnVariableUsedinOpd(ASTNode node) {}
 			public virtual void OnVariableAccessOpd(ASTNode node) {}
@@ -398,7 +435,9 @@ namespace Express
 			public virtual void OnVariableNumOp(ASTNode node) {}
 			public virtual void OnVariableLtCompOp(ASTNode node) {}
 			public virtual void OnVariableGtCompOp(ASTNode node) {}
-			public virtual void OnVariableSelectorExp(ASTNode node) {}
+			public virtual void OnVariableOneofExp(ASTNode node) {}
+			public virtual void OnVariableAndorExp(ASTNode node) {}
+			public virtual void OnVariableStrConcatExp(ASTNode node) {}
 			public virtual void OnVariableTypeId(ASTNode node) {}
 			public virtual void OnVariablePtKeyword(ASTNode node) {}
 			public virtual void OnVariableLiteral(ASTNode node) {}
@@ -407,6 +446,7 @@ namespace Express
 			public virtual void OnVariableSelectOrEntityId(ASTNode node) {}
 			public virtual void OnVariablePropId(ASTNode node) {}
 			public virtual void OnVariableRuleId(ASTNode node) {}
+			public virtual void OnVariableFunctionId(ASTNode node) {}
 		}
 
 		/// <summary>
@@ -472,25 +512,30 @@ namespace Express
 				case 0x002E: visitor.OnVariableLimitsExp(node); break;
 				case 0x002F: visitor.OnVariableCompExp(node); break;
 				case 0x0030: visitor.OnVariableCompOpd(node); break;
-				case 0x0031: visitor.OnVariableTypeofOpd(node); break;
-				case 0x0032: visitor.OnVariableUsedinOpd(node); break;
-				case 0x0033: visitor.OnVariableAccessOpd(node); break;
-				case 0x0034: visitor.OnVariableSizeofOpd(node); break;
-				case 0x0035: visitor.OnVariableCompOp(node); break;
-				case 0x0036: visitor.OnVariableEqOp(node); break;
-				case 0x0037: visitor.OnVariableInOp(node); break;
-				case 0x0038: visitor.OnVariableNumOp(node); break;
-				case 0x0039: visitor.OnVariableLtCompOp(node); break;
-				case 0x003A: visitor.OnVariableGtCompOp(node); break;
-				case 0x003B: visitor.OnVariableSelectorExp(node); break;
-				case 0x003C: visitor.OnVariableTypeId(node); break;
-				case 0x003D: visitor.OnVariablePtKeyword(node); break;
-				case 0x003E: visitor.OnVariableLiteral(node); break;
-				case 0x003F: visitor.OnVariableNumericLit(node); break;
-				case 0x0040: visitor.OnVariableSchemaId(node); break;
-				case 0x0041: visitor.OnVariableSelectOrEntityId(node); break;
-				case 0x0042: visitor.OnVariablePropId(node); break;
-				case 0x0043: visitor.OnVariableRuleId(node); break;
+				case 0x0031: visitor.OnVariableFunctionCallExp(node); break;
+				case 0x0032: visitor.OnVariableFunctionParamsExp(node); break;
+				case 0x0033: visitor.OnVariableTypeofOpd(node); break;
+				case 0x0034: visitor.OnVariableUsedinOpd(node); break;
+				case 0x0035: visitor.OnVariableAccessOpd(node); break;
+				case 0x0036: visitor.OnVariableSizeofOpd(node); break;
+				case 0x0037: visitor.OnVariableCompOp(node); break;
+				case 0x0038: visitor.OnVariableEqOp(node); break;
+				case 0x0039: visitor.OnVariableInOp(node); break;
+				case 0x003A: visitor.OnVariableNumOp(node); break;
+				case 0x003B: visitor.OnVariableLtCompOp(node); break;
+				case 0x003C: visitor.OnVariableGtCompOp(node); break;
+				case 0x003D: visitor.OnVariableOneofExp(node); break;
+				case 0x003E: visitor.OnVariableAndorExp(node); break;
+				case 0x003F: visitor.OnVariableStrConcatExp(node); break;
+				case 0x0040: visitor.OnVariableTypeId(node); break;
+				case 0x0041: visitor.OnVariablePtKeyword(node); break;
+				case 0x0042: visitor.OnVariableLiteral(node); break;
+				case 0x0043: visitor.OnVariableNumericLit(node); break;
+				case 0x0044: visitor.OnVariableSchemaId(node); break;
+				case 0x0045: visitor.OnVariableSelectOrEntityId(node); break;
+				case 0x0046: visitor.OnVariablePropId(node); break;
+				case 0x0047: visitor.OnVariableRuleId(node); break;
+				case 0x0048: visitor.OnVariableFunctionId(node); break;
 			}
 		}
 	}
