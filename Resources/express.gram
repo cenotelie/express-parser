@@ -26,40 +26,41 @@
 		root		-> comment_exp* schema_body;
 		comment_exp -> ANNOTATION;
 		schema_body -> schema_decl (comment_exp | use_decl | type_decl | entity_decl)*;
-		use_decl	-> 'USE'! 'FROM'! schema_id ';'!;
-		schema_decl -> 'SCHEMA'! schema_id ';'!;
-		type_decl	-> 'TYPE'! select_or_entity_id '='! (select_decl | enum_decl | prop_exp ) ';'! where_decl? 'END_TYPE'! ';'!;
-		select_decl	-> 'SELECT'! '('! select_or_entity_id (','! select_or_entity_id)* ')'!;
-		entity_decl	-> 'ENTITY'! select_or_entity_id abstract_decl? (subtype_decl | supertype_decl)* ';'! (prop_decl | INLINE_ANNOTATION)* derive_decl? unique_decl? where_decl? 'END_ENTITY'! ';'!;
-		enum_decl	-> 'ENUMERATION'! 'OF'! '('! select_or_entity_id (','! select_or_entity_id)* ')'!;
+		use_decl	-> 'USE'! 'FROM'! IDENTIFIER ';'!;
+		schema_decl -> 'SCHEMA'! IDENTIFIER ';'!;
+		type_decl	-> 'TYPE'! IDENTIFIER '='! (select_decl | enum_decl | type_id ) ';'! where_decl? 'END_TYPE'! ';'!;
+		select_decl	-> 'SELECT'! '('! IDENTIFIER (','! IDENTIFIER)* ')'!;
+		entity_decl	-> 'ENTITY'! IDENTIFIER abstract_decl? (subtype_decl | supertype_decl)* ';'! (prop_decl | INLINE_ANNOTATION)* derive_decl? unique_decl? where_decl? 'END_ENTITY'! ';'!;
+		enum_decl	-> 'ENUMERATION'! 'OF'! '('! IDENTIFIER (','! IDENTIFIER)* ')'!;
 		abstract_decl	-> 'ABSTRACT';
-		supertype_decl	-> 'SUBTYPE'! 'OF'! '('! select_or_entity_id (','! select_or_entity_id)* ')'!;
+		supertype_decl	-> 'SUBTYPE'! 'OF'! '('! IDENTIFIER (','! IDENTIFIER)* ')'!;
 		subtype_decl	-> 'SUPERTYPE'! 'OF'! '('! (oneof_exp | andor_exp) ')'!;
 		derive_decl	-> 'DERIVE'! INLINE_ANNOTATION* derive_exp+;
 		derive_exp	-> attr_read_exp ':'! type_id ':='! (attr_read_exp | literal) ';'! INLINE_ANNOTATION*;
 		unique_decl     -> 'UNIQUE'! INLINE_ANNOTATION* unique_exp+;
-		unique_exp      -> rule_id ':' attr_read_exp (',' attr_read_exp)* ';'! INLINE_ANNOTATION*;
-		attr_read_exp	-> ('SELF' | 'SELF\\'prop_id | prop_id('\\'prop_id)?)('.'prop_id)*('['! INTEGER_LITERAL_DECIMAL ']'!)?;
-		prop_decl	-> attr_read_exp ':'! optional_decl? prop_exp ';'!;
-		prop_exp	-> type_id;
-		list_exp	-> 'LIST'! array_exp 'OF'! type_id;
+		unique_exp      -> IDENTIFIER ':' attr_read_exp (',' attr_read_exp)* ';'! INLINE_ANNOTATION*;
+		attr_read_exp	-> ('SELF' | 'SELF\\'IDENTIFIER | IDENTIFIER('\\'IDENTIFIER)?)('.'IDENTIFIER)*('['! INTEGER_LITERAL_DECIMAL ']'!)?;
+		prop_decl	-> attr_read_exp ':'! optional_decl? type_id ';'!;
+		list_decl	-> 'LIST'! array_exp 'OF'! type_id;
 		list_concat_exp	-> (list_ext | comp_opd) ('*'! (list_ext | comp_opd))+ | list_ext;
 		list_ext    -> '['! comp_opd (','! comp_opd)* ']'!;
-		set_exp		-> 'SET'! array_exp 'OF'! type_id;
+		set_decl		-> 'SET'! array_exp 'OF'! type_id;
+		array_decl		-> 'ARRAY'! array_exp 'OF'! type_id;
+		bag_decl		-> 'BAG'! array_exp 'OF'! type_id;
 		query_exp   -> 'QUERY'! '('! or_exp '|'! or_exp ')'!;
 		array_exp	-> '['! INTEGER_LITERAL_DECIMAL (':'! (INTEGER_LITERAL_DECIMAL | '?'))?']'!;
 		optional_decl	-> 'OPTIONAL';
 		where_decl	-> 'WHERE'! INLINE_ANNOTATION* rule_exp+;
-		rule_exp	-> rule_id ':'! or_exp ';'! INLINE_ANNOTATION*;
+		rule_exp	-> IDENTIFIER ':'! or_exp ';'! INLINE_ANNOTATION*;
 		or_exp		-> and_exp | or_exp 'OR'! and_exp;
 		and_exp		-> unary_exp | and_exp 'AND'! unary_exp;
 		unary_exp	-> 'NOT'? atom_exp;
 		atom_exp	-> exists_exp | comp_exp | limits_exp | function_call_exp | '('! or_exp ')'!;
-		exists_exp	-> 'EXISTS'! '('! prop_id ')'!;
+		exists_exp	-> 'EXISTS'! '('! IDENTIFIER ')'!;
 		limits_exp	-> '{'! numeric_lit lt_comp_op 'SELF' lt_comp_op numeric_lit '}'!;
 		comp_exp	-> comp_opd comp_op comp_opd;
 		comp_opd	-> access_opd | typeof_opd | sizeof_opd | usedin_opd | '('! comp_opd ')'!;
-		function_call_exp	-> function_id '(' function_params_exp (','! function_params_exp)* ')';
+		function_call_exp	-> IDENTIFIER '(' function_params_exp (','! function_params_exp)* ')';
 		function_params_exp	-> access_opd | list_ext;
 		typeof_opd	-> 'TYPEOF'! '('! access_opd ')'!;
 		usedin_opd	-> 'USEDIN'! '('! access_opd (','! access_opd)* ')'!;
@@ -71,17 +72,12 @@
 		num_op		-> lt_comp_op | gt_comp_op; //Numerical comparison symbols
 		lt_comp_op	-> '<' | '<=' | '<*'; //liter or equal comparison
 		gt_comp_op	-> '>=' | '>' | '>*'; //greater or equal comparison
-		oneof_exp	-> 'ONEOF' '('! select_or_entity_id (','! select_or_entity_id)+ ')'!;
+		oneof_exp	-> 'ONEOF' '('! IDENTIFIER (','! IDENTIFIER)+ ')'!;
 		andor_exp	-> '('! oneof_exp ')'! ('ANDOR'! '('! oneof_exp ')'!)+;
 		str_concat_exp	-> STRING_LITERAL ('+'! STRING_LITERAL)+;
-		type_id		-> select_or_entity_id | pt_keyword | list_exp | set_exp;
+		type_id		-> IDENTIFIER | pt_keyword | list_decl | set_decl | array_decl | bag_decl;
 		pt_keyword	-> 'STRING' | 'NUMBER' | 'BOOLEAN' | 'LOGICAL' | 'BINARY' | 'INTEGER' | 'REAL'; //Primitive type keywords
 		literal		-> 'true' | 'false' | numeric_lit | STRING_LITERAL;
 		numeric_lit	-> INTEGER_LITERAL_DECIMAL | INTEGER_LITERAL_HEXA | REAL_LITERAL;
-		schema_id	-> IDENTIFIER;
-		select_or_entity_id	-> IDENTIFIER;
-		prop_id		-> IDENTIFIER;
-		rule_id		-> IDENTIFIER;
-		function_id	-> IDENTIFIER;
 	}
 }

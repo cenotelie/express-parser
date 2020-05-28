@@ -7,7 +7,7 @@ using Express;
 
 namespace Express_Parser
 {
-    class TextGenerator
+    class ExpressModelGenerator
     {
         private TextWriter writer;
         private ASTNode root;
@@ -15,7 +15,7 @@ namespace Express_Parser
 
         private Schema schema;
 
-        public TextGenerator(ASTNode root, string baseName, string outputFile, bool debug)
+        public ExpressModelGenerator(ASTNode root, string baseName, string outputFile, bool debug)
         {
             this.root = root;
             this.debug = debug;
@@ -71,7 +71,7 @@ namespace Express_Parser
         private void ProcessType(ASTNode node)
         {
             ASTNode nameNode = node.Children[0];
-            string name = nameNode.Children[0].Value;
+            string name = nameNode.Value;
             for (int i = 1; i < node.Children.Count; i++)
             {
                 switch (node.Children[i].Symbol.ID)
@@ -97,7 +97,7 @@ namespace Express_Parser
             for (int i = 1; i < node.Children.Count; i++)
             {
                 nameNode = node.Children[i];
-                enumeration.AddLiteral(nameNode.Children[0].Value);
+                enumeration.AddLiteral(nameNode.Value);
             }
             this.schema.AddEnumeration(enumeration);
         }
@@ -108,7 +108,7 @@ namespace Express_Parser
             for (int i = 0; i < node.Children.Count; i++)
             {
                 nameNode = node.Children[i];
-                type.AddType(nameNode.Children[0].Value);
+                type.AddType(nameNode.Value);
             }
             this.schema.AddSelectType(type);
         }
@@ -124,7 +124,7 @@ namespace Express_Parser
                 } 
                 else
                 {
-                    this.schema.AddEquivalentClasses(name, node.Children[0].Children[0].Value);
+                    this.schema.AddEquivalentClasses(name, node.Children[0].Value);
                 }
             }
             else
@@ -133,7 +133,7 @@ namespace Express_Parser
         private void ProcessEntity(ASTNode node)
         {
             ASTNode nameNode = node.Children[0];
-            Entity entity = new Entity(nameNode.Children[0].Value);
+            Entity entity = new Entity(nameNode.Value);
             for (int i = 1; i < node.Children.Count; i++)
             {
                 switch(node.Children[i].Symbol.ID)
@@ -142,7 +142,7 @@ namespace Express_Parser
                         entity.Abstract = true;
                         break;
                     case ExpressParser.ID.VariableSubtypeDecl:
-                        this.ProcessSubTypes(entity, node.Children[i]);
+                        this.ProcessSubTypes(entity, node.Children[i].Children[0]);
                         break;
                     case ExpressParser.ID.VariableSupertypeDecl:
                         this.ProcessInheritance(entity, node.Children[i]);
@@ -164,19 +164,31 @@ namespace Express_Parser
             for (int i = 0; i < node.Children.Count; i++)
             {
                 nameNode = node.Children[i];
-                owner.AddSuperType(nameNode.Children[0].Value);
+                owner.AddSuperType(nameNode.Value);
             }
         }
         private void ProcessSubTypes(Entity owner, ASTNode node)
         {
-            ASTNode selector = node.Children[0];
             ASTNode nameNode;
-            //Only the case "oneof" is considered here
-            for (int i = 1; i < selector.Children.Count; i++)
+            //OneOf Case
+            if (node.Symbol.ID == ExpressParser.ID.VariableOneofExp)
             {
-                nameNode = selector.Children[i];
-                owner.AddDisjointUnion(nameNode.Children[0].Value);
+                for (int i = 1; i < node.Children.Count; i++)
+                {
+                    nameNode = node.Children[i];
+                    owner.AddDisjointUnion(nameNode.Value);
+                }
+                return;
             }
+            //AndOr Case
+            if (node.Symbol.ID == ExpressParser.ID.VariableAndorExp)
+            {
+                for (int i = 1; i < node.Children.Count; i++)
+                {
+                    this.ProcessSubTypes(owner, node.Children[i]);
+                }
+            }
+            
         }
         private void ProcessProperty(Entity owner, ASTNode node)
         {
@@ -189,8 +201,8 @@ namespace Express_Parser
                 child = propNode.Children[i];
                 switch (child.Symbol.ID)
                 {
-                    case ExpressParser.ID.VariablePropId:
-                        propsChain.Add(child.Children[0].Value);
+                    case ExpressLexer.ID.TerminalIdentifier:
+                        propsChain.Add(child.Value);
                         break;
                     default:
                         break;
@@ -207,16 +219,22 @@ namespace Express_Parser
                     case ExpressParser.ID.VariableOptionalDecl:
                         property.Optional = true;
                         break;
-                    case ExpressParser.ID.VariablePropExp:
+                    case ExpressParser.ID.VariableTypeId:
                         type = node.Children[i];
-                        //FIXME: process collections
-                        if (type.Children.Count == 1 && type.Children[0].Symbol.ID != ExpressParser.ID.VariableSetExp)
+                        switch(type.Children[0].Symbol.ID)
                         {
-
-                            property.PType = type.Children[0].Children[0].Value;
+                            case ExpressParser.ID.VariablePtKeyword:
+                                property.IsFunctional = true;
+                                property.PType = type.Children[0].Children[0].Value;
+                                break;
+                            case ExpressLexer.ID.TerminalIdentifier:
+                                property.IsFunctional = true;
+                                property.PType = type.Children[0].Value;
+                                break;
+                            default:
+                                property.PType = type.Children[0].Children[1].Children[0].Value;
+                                break;
                         }
-                        else
-                            return; //TODO: process collections;
                         break;
                     default:
                         break;

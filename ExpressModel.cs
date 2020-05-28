@@ -23,6 +23,7 @@ namespace Express_Model
         private List<Enumeration> enumerations = new List<Enumeration>();
         private List<SelectType> selectTypes = new List<SelectType>();
         private List<Entity> entities = new List<Entity>();
+        private List<Property> properties = new List<Property>();
         private Dictionary<string, string> equivalentClasses = new Dictionary<string, string>();
         public Schema(string schemaBase): base(null) 
         {
@@ -31,28 +32,6 @@ namespace Express_Model
         public Schema(string name, string schemaBase): base(name) 
         {
             this.schemaBase = schemaBase;
-        }
-        public static string GetPrimitiveType(string key)
-        {
-            switch (key)
-            {
-                case "STRING":
-                    return "xsd:string";
-                case "NUMBER":
-                    return "xsd:double";//TODO: integer or real
-                case "BINARY":
-                    return "xsd:base64Binary";//Base 32 in the last specification
-                case "LOGICAL":
-                    return "xsd:boolean";//TODO: Same as boolean with 'undefined' additional value
-                case "BOOLEAN":
-                    return "xsd:boolean";
-                case "INTEGER":
-                    return "xsd:int";
-                case "REAL":
-                    return "xsd:double";
-                default:
-                    return $":{key}";
-            }
         }
         public void AddImport(string import)
         {
@@ -76,7 +55,7 @@ namespace Express_Model
         }
         public void AddEquivalentClasses(string cl1, string cl2)
         {
-            this.equivalentClasses.Add(cl1, cl2);
+            this.equivalentClasses.Add(cl1, Schema.GetOwlPrimitiveType(cl2));
         }
     }
     public partial class Enumeration : NamedElement
@@ -132,16 +111,20 @@ namespace Express_Model
     }
     public partial class Property : NamedElement
     {
-        public Property(string name, Entity owner): base(name) 
+        public Property(string name, Entity subject): base(name) 
         {
-            this.Owner = owner;
+            this.Subject = subject;
         }
         public Property() : base(null) { }
-        public Entity Owner
+        public Entity Subject
         {
             get; set;
         }
         public List<string> TypeDef
+        {
+            get; set;
+        }
+        public bool IsFunctional
         {
             get; set;
         }
@@ -153,5 +136,33 @@ namespace Express_Model
         {
             get; set;
         }
+    }
+
+    public partial class ObjectProperty : Property
+    {
+        public ObjectProperty(string name, Entity subject, Entity _object): base(name, subject)
+        {
+            this.Object = _object;
+        }
+        public ObjectProperty() : base() { }
+        public Entity Object
+        {
+            get; set;
+        }
+
+    }
+
+    public partial class DataProperty : Property
+    {
+        public DataProperty(string name, Entity subject, string _object) : base(name, subject)
+        {
+            this.Object = _object;
+        }
+        public DataProperty() : base() { }
+        public string Object
+        {
+            get; set;
+        }
+
     }
 }

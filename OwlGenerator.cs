@@ -11,6 +11,28 @@ namespace Express_Model
     }
     public partial class Schema : IOwlGeneration
     {
+        public static string GetOwlPrimitiveType(string key)
+        {
+            switch (key)
+            {
+                case "STRING":
+                    return "xsd:string";
+                case "NUMBER":
+                    return "xsd:double";//TODO: integer or real
+                case "BINARY":
+                    return "xsd:base64Binary";//Base 32 in the last specification
+                case "LOGICAL":
+                    return "xsd:boolean";//TODO: Same as boolean with 'undefined' additional value
+                case "BOOLEAN":
+                    return "xsd:boolean";
+                case "INTEGER":
+                    return "xsd:int";
+                case "REAL":
+                    return "xsd:double";
+                default:
+                    return $":{key}";
+            }
+        }
         public void GenerateOWL(TextWriter writer)
         {
             writer.WriteLine("Prefix(owl:=<http://www.w3.org/2002/07/owl#>)");
@@ -28,11 +50,11 @@ namespace Express_Model
             {
                 string type = "rdfs:Literal";
                 this.defTypes.TryGetValue(e.Key, out type);
-                writer.WriteLine($"DatatypeDefinition(:{e.Key} {Schema.GetPrimitiveType(type)})");
+                writer.WriteLine($"DatatypeDefinition(:{e.Key} {Schema.GetOwlPrimitiveType(type)})");
             }
             foreach (KeyValuePair<string, string> e in this.equivalentClasses)
             {
-                writer.WriteLine($"EquivalentClasses(:{e.Key} :{e.Value})");
+                writer.WriteLine($"EquivalentClasses(:{e.Key} {e.Value})");
             }
             foreach (SelectType type in this.selectTypes)
             {
@@ -109,15 +131,22 @@ namespace Express_Model
         {
             if (Schema.primitiveTypes.Contains(this.PType) || this.TypeDef.Contains(this.PType))
             {
-                this.ProcessPrimitiveAttribute(writer, Owner.Name, this.Name, this.Optional, this.PType);
+                this.ProcessPrimitiveAttribute(writer, Subject.Name, this.Name, this.Optional, this.PType);
                 return;
             }
-            this.ProcessReferenceAttribute(writer, Owner.Name, this.Name, this.Optional, this.PType);
+            this.ProcessReferenceAttribute(writer, Subject.Name, this.Name, this.Optional, this.PType);
         }
         private void ProcessPrimitiveAttribute(TextWriter writer, string entityName, string name, bool optional, string type)
         {
+            if (this.IsFunctional)
+            {
+                writer.WriteLine($"FunctionalDataProperty(:{name})");
+            } else
+            {
+                writer.WriteLine($"DataProperty(:{name})");
+            }
             writer.WriteLine($"DataPropertyDomain(:{name} :{entityName})");
-            writer.WriteLine($"DataPropertyRange(:{name} {Schema.GetPrimitiveType(type)})");
+            writer.WriteLine($"DataPropertyRange(:{name} {Schema.GetOwlPrimitiveType(type)})");
             //FIXME: process optionality
         }
         private void ProcessReferenceAttribute(TextWriter writer, string entityName, string name, bool optional, string type)

@@ -48,7 +48,7 @@
   <ItemGroup>
     <Compile Include="OwlGenerator.cs" />
     <Compile Include="ExpressModel.cs" />
-    <Compile Include="TextGenerator.cs" />
+    <Compile Include="ExpressModelGenerator.cs" />
     <Compile Include="ExpressLexer.cs" />
     <Compile Include="ExpressParser.cs" />
     <Compile Include="Program.cs" />
