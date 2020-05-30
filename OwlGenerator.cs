@@ -48,8 +48,7 @@ namespace Express_Model
             }
             foreach (KeyValuePair<string, string> e in this.defTypes)
             {
-                string type = "rdfs:Literal";
-                this.defTypes.TryGetValue(e.Key, out type);
+                this.defTypes.TryGetValue(e.Key, out string type);
                 writer.WriteLine($"DatatypeDefinition(:{e.Key} {Schema.GetOwlPrimitiveType(type)})");
             }
             foreach (KeyValuePair<string, string> e in this.equivalentClasses)
@@ -69,6 +68,10 @@ namespace Express_Model
             {
                 entity.TypeDef = defList;
                 entity.GenerateOWL(writer);
+            }
+            foreach (Property prop in this.properties)
+            {
+                prop.GenerateOWL(writer);
             }
             writer.WriteLine(")");
         }
@@ -117,42 +120,87 @@ namespace Express_Model
             {
                 writer.WriteLine($"SubClassOf(:{this.Name} :{super})");
             }
-            //Attributes
-            foreach (Property property in this.properties)
-            {
-                property.TypeDef = this.TypeDef;
-                property.GenerateOWL(writer);
-            }
         }
     }
     public partial class Property : IOwlGeneration
     {
         public void GenerateOWL(TextWriter writer)
         {
-            if (Schema.primitiveTypes.Contains(this.PType) || this.TypeDef.Contains(this.PType))
+            bool isPrimitiveObjects = false;
+            foreach(string s in this.objects)
             {
-                this.ProcessPrimitiveAttribute(writer, Subject.Name, this.Name, this.Optional, this.PType);
-                return;
+                if (Schema.primitiveTypes.Contains(s))
+                {
+                    isPrimitiveObjects = true;
+                    break;
+                }
             }
-            this.ProcessReferenceAttribute(writer, Subject.Name, this.Name, this.Optional, this.PType);
-        }
-        private void ProcessPrimitiveAttribute(TextWriter writer, string entityName, string name, bool optional, string type)
-        {
-            if (this.IsFunctional)
+            if (isPrimitiveObjects)
             {
-                writer.WriteLine($"FunctionalDataProperty(:{name})");
+                this.ProcessPrimitiveAttributes(writer);
             } else
             {
-                writer.WriteLine($"DataProperty(:{name})");
+                this.ProcessReferenceAttributes(writer);
             }
-            writer.WriteLine($"DataPropertyDomain(:{name} :{entityName})");
-            writer.WriteLine($"DataPropertyRange(:{name} {Schema.GetOwlPrimitiveType(type)})");
+        }
+        private void ProcessPrimitiveAttributes(TextWriter writer)
+        {
+            if (this.subjects.Count == 0 || this.objects.Count == 0) return;
+            if (this.IsFunctional)
+            {
+                writer.WriteLine($"FunctionalDataProperty(:{this.Name})");
+            } else
+            {
+                writer.WriteLine($"DataProperty(:{this.Name})");
+            }
+            if (this.subjects.Count == 1)
+            {
+                writer.WriteLine($"DataPropertyDomain(:{this.Name} :{this.subjects.First().Name})");
+            }
+            else
+            {
+                var _s = from subject in this.subjects select $":{subject.Name}";
+                var s = string.Join(" ", _s);
+                writer.WriteLine($"DataPropertyDomain(:{this.Name} ObjectUnionOf({s}))");
+            }
+            if (this.objects.Count == 1)
+            {
+                writer.WriteLine($"DataPropertyRange(:{this.Name} {Schema.GetOwlPrimitiveType(this.objects.First())})");
+            }
+            else
+            {
+                var _o = from obj in this.objects select $"{Schema.GetOwlPrimitiveType(obj)}";
+                var o = string.Join(" ", _o);
+                writer.WriteLine($"DataPropertyRange(:{this.Name} DataUnionOf({o})");
+            }
+            //TODO: process the whole lists as Object / Data unions
+            //writer.WriteLine($"DataPropertyDomain(:{this.Name} :{this.subjects.First().Name})");
+            //writer.WriteLine($"DataPropertyRange(:{this.Name} {Schema.GetOwlPrimitiveType(this.objects.First())})");
             //FIXME: process optionality
         }
-        private void ProcessReferenceAttribute(TextWriter writer, string entityName, string name, bool optional, string type)
+        private void ProcessReferenceAttributes(TextWriter writer)
         {
-            writer.WriteLine($"ObjectPropertyDomain(:{name} :{entityName})");
-            writer.WriteLine($"ObjectPropertyRange(:{name} :{type})");
+            //TODO: process the whole lists as Object / Data unions
+            if (this.subjects.Count == 0 || this.objects.Count == 0) return;
+            if (this.subjects.Count == 1)
+            {
+                writer.WriteLine($"ObjectPropertyDomain(:{this.Name} :{this.subjects.First().Name})");
+            } else
+            {
+                var _s = from subject in this.subjects select $":{subject.Name}";
+                var s = string.Join(" ", _s);
+                writer.WriteLine($"ObjectPropertyDomain(:{this.Name} ObjectUnionOf({s}))");
+            }
+            if (this.objects.Count == 1)
+            {
+                writer.WriteLine($"ObjectPropertyRange(:{this.Name} :{this.objects.First()})");
+            } else
+            {
+                var _o = from obj in this.objects select $":{obj}";
+                var o = string.Join(" ", _o);
+                writer.WriteLine($"ObjectPropertyRange(:{this.Name} :{this.objects.First()})");
+            }
+            
             //FIXME: process optionality
         }
 

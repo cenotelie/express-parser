@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Express_Model
 {
@@ -17,14 +18,14 @@ namespace Express_Model
     {
         public static string[] primitiveTypes = { "NUMBER", "STRING", "BINARY", "LOGICAL", "BOOLEAN", "INTEGER", "REAL" };
 
-        private string schemaBase;
-        private List<string> imports = new List<string>();
-        private Dictionary<string, string> defTypes = new Dictionary<string, string>();
-        private List<Enumeration> enumerations = new List<Enumeration>();
-        private List<SelectType> selectTypes = new List<SelectType>();
-        private List<Entity> entities = new List<Entity>();
-        private List<Property> properties = new List<Property>();
-        private Dictionary<string, string> equivalentClasses = new Dictionary<string, string>();
+        private readonly string schemaBase;
+        private readonly List<string> imports = new List<string>();
+        private readonly Dictionary<string, string> defTypes = new Dictionary<string, string>();
+        private readonly List<Enumeration> enumerations = new List<Enumeration>();
+        private readonly List<SelectType> selectTypes = new List<SelectType>();
+        private readonly List<Entity> entities = new List<Entity>();
+        private readonly List<Property> properties = new List<Property>();
+        private readonly Dictionary<string, string> equivalentClasses = new Dictionary<string, string>();
         public Schema(string schemaBase): base(null) 
         {
             this.schemaBase = schemaBase;
@@ -57,10 +58,28 @@ namespace Express_Model
         {
             this.equivalentClasses.Add(cl1, Schema.GetOwlPrimitiveType(cl2));
         }
+        public Property GetProperty(string name)
+        {
+            List<Property> props = this.properties.Where<Property>(p => p.Name == name).ToList();
+            Property prop;
+            if (props.Count == 0)
+            {
+                prop = new Property(name);
+                this.properties.Add(prop);
+            } else
+            {
+                prop = props.First();
+            }
+            return prop;
+        }
+        public void AddProperty(Property property)
+        {
+            this.properties.Add(property);
+        }
     }
     public partial class Enumeration : NamedElement
     {
-        private List<string> literals = new List<string>();
+        private readonly List<string> literals = new List<string>();
         public Enumeration(string name): base(name) { }
         public void AddLiteral(string literal)
         {
@@ -69,7 +88,7 @@ namespace Express_Model
     }
     public partial class SelectType : NamedElement
     {
-        private List<string> types = new List<string>();
+        private readonly List<string> types = new List<string>();
         public SelectType(string name): base(name) { }
         public SelectType() : this(null) { }
         public void AddType(string type)
@@ -79,9 +98,8 @@ namespace Express_Model
     }
     public partial class Entity : NamedElement
     {
-        private List<string> disjointUnion = new List<string>();
-        private List<string> superTypes = new List<string>();
-        private List<Property> properties = new List<Property>();
+        private readonly List<string> disjointUnion = new List<string>();
+        private readonly List<string> superTypes = new List<string>();
         
         public Entity(string name): base(name) 
         {
@@ -104,25 +122,23 @@ namespace Express_Model
         {
             this.superTypes.Add(type);
         }
-        public void AddProperty(Property property)
-        {
-            this.properties.Add(property);
-        }
     }
     public partial class Property : NamedElement
     {
-        public Property(string name, Entity subject): base(name) 
+        private readonly List<Entity> subjects = new List<Entity>();
+        private readonly List<string> objects = new List<string>();
+        public Property(string name): base(name) { }
+        public void AddSubject(Entity entity)
         {
-            this.Subject = subject;
+            if (!this.subjects.Contains(entity))
+            this.subjects.Add(entity);
         }
-        public Property() : base(null) { }
-        public Entity Subject
+        public void AddObject(string name)
         {
-            get; set;
-        }
-        public List<string> TypeDef
-        {
-            get; set;
+            if (!this.objects.Contains(name))
+            {
+                this.objects.Add(name);
+            }
         }
         public bool IsFunctional
         {
@@ -132,37 +148,5 @@ namespace Express_Model
         {
             get; set;
         }
-        public string PType
-        {
-            get; set;
-        }
-    }
-
-    public partial class ObjectProperty : Property
-    {
-        public ObjectProperty(string name, Entity subject, Entity _object): base(name, subject)
-        {
-            this.Object = _object;
-        }
-        public ObjectProperty() : base() { }
-        public Entity Object
-        {
-            get; set;
-        }
-
-    }
-
-    public partial class DataProperty : Property
-    {
-        public DataProperty(string name, Entity subject, string _object) : base(name, subject)
-        {
-            this.Object = _object;
-        }
-        public DataProperty() : base() { }
-        public string Object
-        {
-            get; set;
-        }
-
     }
 }

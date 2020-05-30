@@ -9,11 +9,11 @@ namespace Express_Parser
 {
     class ExpressModelGenerator
     {
-        private TextWriter writer;
-        private ASTNode root;
-        private bool debug;
+        private readonly TextWriter writer;
+        private readonly ASTNode root;
+        private readonly bool debug;
 
-        private Schema schema;
+        private readonly Schema schema;
 
         public ExpressModelGenerator(ASTNode root, string baseName, string outputFile, bool debug)
         {
@@ -210,7 +210,7 @@ namespace Express_Parser
             }
             if (propsChain.Count == 1) name = propsChain[0];
             else return; //FIXME: process chaining of props or SELF
-            Property property = new Property(name, owner);
+            Property property = this.schema.GetProperty(name);
             ASTNode type;
             for (int i = 1; i < node.Children.Count; i++)
             {
@@ -224,15 +224,19 @@ namespace Express_Parser
                         switch(type.Children[0].Symbol.ID)
                         {
                             case ExpressParser.ID.VariablePtKeyword:
+                                //property = new DataProperty(name, owner, );
+                                property.AddSubject(owner);
+                                property.AddObject(type.Children[0].Children[0].Value);
                                 property.IsFunctional = true;
-                                property.PType = type.Children[0].Children[0].Value;
                                 break;
                             case ExpressLexer.ID.TerminalIdentifier:
+                                //property = new ObjectProperty(name, owner, type.Children[0].Value);
+                                property.AddSubject(owner);
+                                property.AddObject(type.Children[0].Value);
                                 property.IsFunctional = true;
-                                property.PType = type.Children[0].Value;
                                 break;
                             default:
-                                property.PType = type.Children[0].Children[1].Children[0].Value;
+                                //TODO: collections
                                 break;
                         }
                         break;
@@ -240,7 +244,7 @@ namespace Express_Parser
                         break;
                 }
             }
-            owner.AddProperty(property);
+            this.schema.AddProperty(property);
         }
 
     }
