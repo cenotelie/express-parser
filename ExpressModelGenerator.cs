@@ -21,17 +21,17 @@ namespace Express_Parser
             this.debug = debug;
             if (debug) writer = Console.Out;
             else writer = new StreamWriter(outputFile);
-            this.schema = new Schema(baseName);
+            schema = new Schema(baseName);
         }
 
         public void GenerateSchema()
         {
-            this.ProcessNode(this.root);
+            ProcessNode(root);
         }
         public void GenerateOWl()
         {
-            this.schema.GenerateOWL(this.writer);
-            this.writer.Close();
+            schema.GenerateOWL(writer);
+            writer.Close();
             if (debug) Console.ReadKey();
         }
         private void ProcessNode(ASTNode node)
@@ -39,16 +39,16 @@ namespace Express_Parser
             switch (node.Symbol.ID)
             {
                 case ExpressParser.ID.VariableSchemaDecl:
-                    this.ProcessSchema(node);
+                    ProcessSchema(node);
                     break;
                 case ExpressParser.ID.VariableUseDecl:
-                    this.ProcessUse(node);
+                    ProcessUse(node);
                     break;
                 case ExpressParser.ID.VariableTypeDecl:
-                    this.ProcessType(node);
+                    ProcessType(node);
                     break;
                 case ExpressParser.ID.VariableEntityDecl:
-                    this.ProcessEntity(node);
+                    ProcessEntity(node);
                     break;
                 default:
                     break;
@@ -60,13 +60,13 @@ namespace Express_Parser
         }
         private void ProcessSchema(ASTNode node)
         {
-            this.schema.Name = node.Children[0].Value;
+            schema.Name = node.Children[0].Value;
         }
         private void ProcessUse(ASTNode node)
         {
             string use = node.Children[0].Value;
             //We assume that IRIs have the same base
-            this.schema.AddImport(use);
+            schema.AddImport(use);
         }
         private void ProcessType(ASTNode node)
         {
@@ -77,15 +77,15 @@ namespace Express_Parser
                 switch (node.Children[i].Symbol.ID)
                 {
                     case ExpressParser.ID.VariableEnumDecl:
-                        this.ProcessEnumeration(name, node.Children[1]);
+                        ProcessEnumeration(name, node.Children[1]);
                         break;
                     case ExpressParser.ID.VariableSelectDecl:
-                        this.ProcessSelectType(name, node.Children[1]);
+                        ProcessSelectType(name, node.Children[1]);
                         break;
                     case ExpressParser.ID.VariableWhereDecl:
                         break;
                     default:
-                        this.ProcessPropertyExp(name, node.Children[1]);
+                        ProcessPropertyExp(name, node.Children[1]);
                         break;
                 }
             }
@@ -99,7 +99,7 @@ namespace Express_Parser
                 nameNode = node.Children[i];
                 enumeration.AddLiteral(nameNode.Value);
             }
-            this.schema.AddEnumeration(enumeration);
+            schema.AddEnumeration(enumeration);
         }
         private void ProcessSelectType(string name, ASTNode node)
         {
@@ -110,7 +110,7 @@ namespace Express_Parser
                 nameNode = node.Children[i];
                 type.AddType(nameNode.Value);
             }
-            this.schema.AddSelectType(type);
+            schema.AddSelectType(type);
         }
         private void ProcessPropertyExp(string name, ASTNode node)
         {
@@ -120,15 +120,15 @@ namespace Express_Parser
                 type = node.Children[0];
                 if (type.Symbol.ID == ExpressParser.ID.VariablePtKeyword)
                 {
-                    this.schema.AddDefType(name, node.Children[0].Children[0].Value);
+                    schema.AddDefType(name, node.Children[0].Children[0].Value);
                 } 
                 else
                 {
-                    this.schema.AddEquivalentClasses(name, node.Children[0].Value);
+                    schema.AddEquivalentClasses(name, node.Children[0].Value);
                 }
             }
             else
-                return; //TODO: process collections;
+                return;
         }
         private void ProcessEntity(ASTNode node)
         {
@@ -142,21 +142,24 @@ namespace Express_Parser
                         entity.Abstract = true;
                         break;
                     case ExpressParser.ID.VariableSubtypeDecl:
-                        this.ProcessSubTypes(entity, node.Children[i].Children[0]);
+                        if (node.Children[i].Children.Count > 0)
+                        {
+                            ProcessSubTypes(entity, node.Children[i].Children[0]);
+                        }
                         break;
                     case ExpressParser.ID.VariableSupertypeDecl:
-                        this.ProcessInheritance(entity, node.Children[i]);
+                        ProcessInheritance(entity, node.Children[i]);
                         break;
                     case ExpressParser.ID.VariableWhereDecl:
                         break;
                     case ExpressParser.ID.VariablePropDecl:
-                        this.ProcessProperty(entity, node.Children[i]);
+                        ProcessProperty(entity, node.Children[i]);
                         break;
                     default:
                         break;
                 }
             }
-            this.schema.AddEntity(entity);
+            schema.AddEntity(entity);
         }
         private void ProcessInheritance(Entity owner, ASTNode node)
         {
@@ -185,14 +188,19 @@ namespace Express_Parser
             {
                 for (int i = 1; i < node.Children.Count; i++)
                 {
-                    this.ProcessSubTypes(owner, node.Children[i]);
+                    ProcessSubTypes(owner, node.Children[i]);
                 }
+            }
+            //Single Inheritance
+            if (node.Symbol.ID == ExpressLexer.ID.TerminalIdentifier)
+            {
+                //FIXME: what does this mean ?
             }
             
         }
         private void ProcessProperty(Entity owner, ASTNode node)
         {
-            ASTNode propNode = node.Children[0];
+            ASTNode propNode = node.Children[0]; //att_read_exp
             string name;
             List<string> propsChain = new List<string>();
             ASTNode child;
@@ -209,10 +217,10 @@ namespace Express_Parser
                 }
             }
             if (propsChain.Count == 1) name = propsChain[0];
-            else return; //FIXME: process chaining of props or SELF
-            Property property = this.schema.GetProperty(name);
+            else return; //FIXME: other cases are related to restrictions of inherited properties (swrl ?)
+            Property property = schema.GetProperty(name); //In case the property has already been defined
             ASTNode type;
-            for (int i = 1; i < node.Children.Count; i++)
+            for (int i = 1; i < node.Children.Count; i++) //Optional and type_id nodes
             {
                 switch (node.Children[i].Symbol.ID)
                 {
@@ -236,7 +244,14 @@ namespace Express_Parser
                                 property.IsFunctional = true;
                                 break;
                             default:
-                                //TODO: collections
+                                //Collections: set / array / bag / list
+                                property.AddSubject(owner);
+                                ASTNode collectionTypeNode = type.Children[0];
+                                //We do not consider collection of collections, to be improved if needed
+                                if (collectionTypeNode.Children[1].Children.Count == 1)
+                                {
+                                    property.AddObject(collectionTypeNode.Children[1].Children[0].Value);
+                                }
                                 break;
                         }
                         break;
@@ -244,7 +259,6 @@ namespace Express_Parser
                         break;
                 }
             }
-            this.schema.AddProperty(property);
         }
 
     }

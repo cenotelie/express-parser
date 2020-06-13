@@ -34,9 +34,9 @@
 		enum_decl	-> 'ENUMERATION'! 'OF'! '('! IDENTIFIER (','! IDENTIFIER)* ')'!;
 		abstract_decl	-> 'ABSTRACT';
 		supertype_decl	-> 'SUBTYPE'! 'OF'! '('! IDENTIFIER (','! IDENTIFIER)* ')'!;
-		subtype_decl	-> 'SUPERTYPE'! 'OF'! '('! (oneof_exp | andor_exp) ')'!;
+		subtype_decl	-> 'SUPERTYPE'! ('OF'! '('! (oneof_exp | andor_exp | IDENTIFIER) ')'!)?;
 		derive_decl	-> 'DERIVE'! INLINE_ANNOTATION* derive_exp+;
-		derive_exp	-> attr_read_exp ':'! type_id ':='! (attr_read_exp | literal) ';'! INLINE_ANNOTATION*;
+		derive_exp	-> attr_read_exp ':'! type_id ':='! (attr_read_exp | literal | sizeof_opd) ';'! INLINE_ANNOTATION*;
 		unique_decl     -> 'UNIQUE'! INLINE_ANNOTATION* unique_exp+;
 		unique_exp      -> IDENTIFIER ':' attr_read_exp (',' attr_read_exp)* ';'! INLINE_ANNOTATION*;
 		attr_read_exp	-> ('SELF' | 'SELF\\'IDENTIFIER | IDENTIFIER('\\'IDENTIFIER)?)('.'IDENTIFIER)*('['! INTEGER_LITERAL_DECIMAL ']'!)?;
@@ -51,8 +51,9 @@
 		array_exp	-> '['! INTEGER_LITERAL_DECIMAL (':'! (INTEGER_LITERAL_DECIMAL | '?'))?']'!;
 		optional_decl	-> 'OPTIONAL';
 		where_decl	-> 'WHERE'! INLINE_ANNOTATION* rule_exp+;
-		rule_exp	-> IDENTIFIER ':'! or_exp ';'! INLINE_ANNOTATION*;
-		or_exp		-> and_exp | or_exp 'OR'! and_exp;
+		rule_exp	-> IDENTIFIER ':'! (or_exp | sizeof_opd) ';'! INLINE_ANNOTATION*;
+		or_exp		-> xor_exp | or_exp 'OR'! xor_exp;
+		xor_exp		-> and_exp | xor_exp 'XOR'! and_exp; 
 		and_exp		-> unary_exp | and_exp 'AND'! unary_exp;
 		unary_exp	-> 'NOT'? atom_exp;
 		atom_exp	-> exists_exp | comp_exp | limits_exp | function_call_exp | '('! or_exp ')'!;

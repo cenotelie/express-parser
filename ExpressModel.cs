@@ -7,7 +7,7 @@ namespace Express_Model
     {
         public NamedElement(string name)
         {
-            this.Name = name;
+            Name = name;
         }
         public string Name
         {
@@ -36,36 +36,36 @@ namespace Express_Model
         }
         public void AddImport(string import)
         {
-            this.imports.Add(import);
+            imports.Add(import);
         }
         public void AddDefType(string def, string type)
         {
-            this.defTypes.Add(def, type);
+            defTypes.Add(def, type);
         }
         public void AddEnumeration(Enumeration enumeration)
         {
-            this.enumerations.Add(enumeration);
+            enumerations.Add(enumeration);
         }
         public void AddSelectType(SelectType type)
         {
-            this.selectTypes.Add(type);
+            selectTypes.Add(type);
         }
         public void AddEntity(Entity entity)
         {
-            this.entities.Add(entity);
+            entities.Add(entity);
         }
         public void AddEquivalentClasses(string cl1, string cl2)
         {
-            this.equivalentClasses.Add(cl1, Schema.GetOwlPrimitiveType(cl2));
+            equivalentClasses.Add(cl1, Schema.GetOwlPrimitiveType(cl2));
         }
         public Property GetProperty(string name)
         {
-            List<Property> props = this.properties.Where<Property>(p => p.Name == name).ToList();
+            List<Property> props = properties.Where<Property>(p => p.Name == name).ToList();
             Property prop;
             if (props.Count == 0)
             {
                 prop = new Property(name);
-                this.properties.Add(prop);
+                properties.Add(prop);
             } else
             {
                 prop = props.First();
@@ -74,7 +74,7 @@ namespace Express_Model
         }
         public void AddProperty(Property property)
         {
-            this.properties.Add(property);
+            properties.Add(property);
         }
     }
     public partial class Enumeration : NamedElement
@@ -83,7 +83,7 @@ namespace Express_Model
         public Enumeration(string name): base(name) { }
         public void AddLiteral(string literal)
         {
-            this.literals.Add(literal);
+            literals.Add(literal);
         }
     }
     public partial class SelectType : NamedElement
@@ -93,7 +93,7 @@ namespace Express_Model
         public SelectType() : this(null) { }
         public void AddType(string type)
         {
-            this.types.Add(type);
+            types.Add(type);
         }
     }
     public partial class Entity : NamedElement
@@ -103,7 +103,7 @@ namespace Express_Model
         
         public Entity(string name): base(name) 
         {
-            this.Abstract = false;
+            Abstract = false;
         }
         public Entity() : this(null) { }
         public bool Abstract
@@ -116,11 +116,11 @@ namespace Express_Model
         }
         public void AddDisjointUnion(string type)
         {
-            this.disjointUnion.Add(type);
+            disjointUnion.Add(type);
         }
         public void AddSuperType(string type)
         {
-            this.superTypes.Add(type);
+            superTypes.Add(type);
         }
     }
     public partial class Property : NamedElement
@@ -130,14 +130,14 @@ namespace Express_Model
         public Property(string name): base(name) { }
         public void AddSubject(Entity entity)
         {
-            if (!this.subjects.Contains(entity))
-            this.subjects.Add(entity);
+            if (!subjects.Contains(entity))
+            subjects.Add(entity);
         }
         public void AddObject(string name)
         {
-            if (!this.objects.Contains(name))
+            if (!objects.Contains(name))
             {
-                this.objects.Add(name);
+                objects.Add(name);
             }
         }
         public bool IsFunctional

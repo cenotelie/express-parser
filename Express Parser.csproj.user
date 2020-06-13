@@ -5,6 +5,6 @@
     </ReferencePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
-    <StartArguments>http://www.cenotelie.fr/ontologies/express C:\Users\aliko\Documents\Collins\Standards\test.exp C:\Users\aliko\Documents\Collins\Standards\test.owl</StartArguments>
+    <StartArguments>http://www.cenotelie.fr/ontologies/express C:\Users\aliko\Documents\Collins\Standards\test2.exp C:\Users\aliko\Documents\Collins\Standards\test.owl</StartArguments>
   </PropertyGroup>
 </Project>

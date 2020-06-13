@@ -40,36 +40,38 @@ namespace Express_Model
             writer.WriteLine("Prefix(rdfs:=<http://www.w3.org/2000/01/rdf-schema#>)");
             writer.WriteLine("Prefix(xml:=<http://www.w3.org/XML/1998/namespace>)");
             writer.WriteLine("Prefix(xsd:=<http://www.w3.org/2001/XMLSchema#>)");
-            writer.WriteLine($"Prefix(:=<{this.schemaBase}#>)\n");
-            writer.WriteLine($"Ontology(<{this.schemaBase}/{this.Name}>");
-            foreach (string import in this.imports)
+            writer.WriteLine($"Prefix(:=<{schemaBase}#>)\n");
+            writer.WriteLine($"Ontology(<{schemaBase}/{Name}>");
+            foreach (string import in imports)
             {
-                writer.WriteLine($"Import (<{this.schemaBase}/{import}>)");
+                writer.WriteLine($"Import (<{schemaBase}/{import}>)");
             }
-            foreach (KeyValuePair<string, string> e in this.defTypes)
+            foreach (KeyValuePair<string, string> e in defTypes)
             {
-                this.defTypes.TryGetValue(e.Key, out string type);
+                defTypes.TryGetValue(e.Key, out string type);
                 writer.WriteLine($"DatatypeDefinition(:{e.Key} {Schema.GetOwlPrimitiveType(type)})");
+                writer.WriteLine($"AnnotationAssertion(rdfs:label :{e.Key} \"{e.Key}\"^^xsd:string)");
             }
-            foreach (KeyValuePair<string, string> e in this.equivalentClasses)
+            foreach (KeyValuePair<string, string> e in equivalentClasses)
             {
                 writer.WriteLine($"EquivalentClasses(:{e.Key} {e.Value})");
+                writer.WriteLine($"AnnotationAssertion(rdfs:label :{e.Key} \"{e.Key}\"^^xsd:string)");
             }
-            foreach (SelectType type in this.selectTypes)
+            foreach (SelectType type in selectTypes)
             {
                 type.GenerateOWL(writer);
             }
-            List<string> defList = new List<string>(this.defTypes.Keys);
-            foreach (Enumeration enumeration in this.enumerations)
+            List<string> defList = new List<string>(defTypes.Keys);
+            foreach (Enumeration enumeration in enumerations)
             {
                 enumeration.GenerateOWL(writer);
             }
-            foreach (Entity entity in this.entities)
+            foreach (Entity entity in entities)
             {
                 entity.TypeDef = defList;
                 entity.GenerateOWL(writer);
             }
-            foreach (Property prop in this.properties)
+            foreach (Property prop in properties)
             {
                 prop.GenerateOWL(writer);
             }
@@ -80,12 +82,13 @@ namespace Express_Model
     {
         public void GenerateOWL(TextWriter writer)
         {
-            writer.WriteLine($"Declaration(Class(:{this.Name}))");
-            StringBuilder builder = new StringBuilder($"EquivalentClasses(:{this.Name} ObjectOneOf(");
-            foreach (string literal in this.literals)
+            writer.WriteLine($"Declaration(Class(:{Name}))");
+            writer.WriteLine($"AnnotationAssertion(rdfs:label :{Name} \"{Name}\"^^xsd:string)");
+            StringBuilder builder = new StringBuilder($"EquivalentClasses(:{Name} ObjectOneOf(");
+            foreach (string literal in literals)
             {
                 builder.Append($":{literal} ");
-                writer.WriteLine($"ClassAssertion(:{this.Name} :{literal})");
+                writer.WriteLine($"ClassAssertion(:{Name} :{literal})");
             }
             builder.Append("))");
             writer.WriteLine(builder.ToString());
@@ -95,30 +98,32 @@ namespace Express_Model
     {
         public void GenerateOWL(TextWriter writer)
         {
-            writer.WriteLine($"EquivalentClasses(:{this.Name} ObjectUnionOf(");
-            foreach (string type in this.types)
+            writer.WriteLine($"EquivalentClasses(:{Name} ObjectUnionOf(");
+            foreach (string type in types)
             {
                 writer.WriteLine($":{type}");
             }
             writer.WriteLine("))");
+            writer.WriteLine($"AnnotationAssertion(rdfs:label :{Name} \"{Name}\"^^xsd:string)");
         }
     }
     public partial class Entity : IOwlGeneration
     {
         public void GenerateOWL(TextWriter writer)
         {
-            writer.WriteLine($"Declaration(Class(:{this.Name}))");
+            writer.WriteLine($"Declaration(Class(:{Name}))");
+            writer.WriteLine($"AnnotationAssertion(rdfs:label :{Name} \"{Name}\"^^xsd:string)");
             //sub types
-            if (this.disjointUnion.Count > 0)
+            if (disjointUnion.Count > 0)
             {
-                var query = this.disjointUnion.Select(x => ":" + x);
+                var query = disjointUnion.Select(x => ":" + x);
                 string union = string.Join(" ", query.ToList());
-                writer.WriteLine($"DisjointUnion(:{this.Name} {union})");
+                writer.WriteLine($"DisjointUnion(:{Name} {union})");
             }
             //super types
-            foreach (string super in this.superTypes)
+            foreach (string super in superTypes)
             {
-                writer.WriteLine($"SubClassOf(:{this.Name} :{super})");
+                writer.WriteLine($"SubClassOf(:{Name} :{super})");
             }
         }
     }
@@ -127,7 +132,7 @@ namespace Express_Model
         public void GenerateOWL(TextWriter writer)
         {
             bool isPrimitiveObjects = false;
-            foreach(string s in this.objects)
+            foreach(string s in objects)
             {
                 if (Schema.primitiveTypes.Contains(s))
                 {
@@ -137,68 +142,70 @@ namespace Express_Model
             }
             if (isPrimitiveObjects)
             {
-                this.ProcessPrimitiveAttributes(writer);
+                ProcessPrimitiveAttributes(writer);
             } else
             {
-                this.ProcessReferenceAttributes(writer);
+                ProcessReferenceAttributes(writer);
             }
         }
         private void ProcessPrimitiveAttributes(TextWriter writer)
         {
-            if (this.subjects.Count == 0 || this.objects.Count == 0) return;
-            if (this.IsFunctional)
+            if (subjects.Count == 0 || objects.Count == 0) return;
+            if (IsFunctional)
             {
-                writer.WriteLine($"FunctionalDataProperty(:{this.Name})");
+                writer.WriteLine($"FunctionalDataProperty(:{Name})");
             } else
             {
-                writer.WriteLine($"DataProperty(:{this.Name})");
+                writer.WriteLine($"DataProperty(:{Name})");
             }
-            if (this.subjects.Count == 1)
+            writer.WriteLine($"AnnotationAssertion(rdfs:label :{Name} \"{Name}\"^^xsd:string)");
+            if (subjects.Count == 1)
             {
-                writer.WriteLine($"DataPropertyDomain(:{this.Name} :{this.subjects.First().Name})");
+                writer.WriteLine($"DataPropertyDomain(:{Name} :{subjects.First().Name})");
             }
             else
             {
-                var _s = from subject in this.subjects select $":{subject.Name}";
+                var _s = from subject in subjects select $":{subject.Name}";
                 var s = string.Join(" ", _s);
-                writer.WriteLine($"DataPropertyDomain(:{this.Name} ObjectUnionOf({s}))");
+                writer.WriteLine($"DataPropertyDomain(:{Name} ObjectUnionOf({s}))");
             }
-            if (this.objects.Count == 1)
+            if (objects.Count == 1)
             {
-                writer.WriteLine($"DataPropertyRange(:{this.Name} {Schema.GetOwlPrimitiveType(this.objects.First())})");
+                writer.WriteLine($"DataPropertyRange(:{Name} {Schema.GetOwlPrimitiveType(objects.First())})");
             }
             else
             {
-                var _o = from obj in this.objects select $"{Schema.GetOwlPrimitiveType(obj)}";
+                var _o = from obj in objects select $"{Schema.GetOwlPrimitiveType(obj)}";
                 var o = string.Join(" ", _o);
-                writer.WriteLine($"DataPropertyRange(:{this.Name} DataUnionOf({o})");
+                writer.WriteLine($"DataPropertyRange(:{Name} DataUnionOf({o})");
             }
             //TODO: process the whole lists as Object / Data unions
-            //writer.WriteLine($"DataPropertyDomain(:{this.Name} :{this.subjects.First().Name})");
-            //writer.WriteLine($"DataPropertyRange(:{this.Name} {Schema.GetOwlPrimitiveType(this.objects.First())})");
+            //writer.WriteLine($"DataPropertyDomain(:{Name} :{subjects.First().Name})");
+            //writer.WriteLine($"DataPropertyRange(:{Name} {Schema.GetOwlPrimitiveType(objects.First())})");
             //FIXME: process optionality
         }
         private void ProcessReferenceAttributes(TextWriter writer)
         {
+            writer.WriteLine($"AnnotationAssertion(rdfs:label :{Name} \"{Name}\"^^xsd:string)");
             //TODO: process the whole lists as Object / Data unions
-            if (this.subjects.Count == 0 || this.objects.Count == 0) return;
-            if (this.subjects.Count == 1)
+            if (subjects.Count == 0 || objects.Count == 0) return;
+            if (subjects.Count == 1)
             {
-                writer.WriteLine($"ObjectPropertyDomain(:{this.Name} :{this.subjects.First().Name})");
+                writer.WriteLine($"ObjectPropertyDomain(:{Name} :{subjects.First().Name})");
             } else
             {
-                var _s = from subject in this.subjects select $":{subject.Name}";
+                var _s = from subject in subjects select $":{subject.Name}";
                 var s = string.Join(" ", _s);
-                writer.WriteLine($"ObjectPropertyDomain(:{this.Name} ObjectUnionOf({s}))");
+                writer.WriteLine($"ObjectPropertyDomain(:{Name} ObjectUnionOf({s}))");
             }
-            if (this.objects.Count == 1)
+            if (objects.Count == 1)
             {
-                writer.WriteLine($"ObjectPropertyRange(:{this.Name} :{this.objects.First()})");
+                writer.WriteLine($"ObjectPropertyRange(:{Name} :{objects.First()})");
             } else
             {
-                var _o = from obj in this.objects select $":{obj}";
+                var _o = from obj in objects select $":{obj}";
                 var o = string.Join(" ", _o);
-                writer.WriteLine($"ObjectPropertyRange(:{this.Name} :{this.objects.First()})");
+                writer.WriteLine($"ObjectPropertyRange(:{Name} ObjectUnionOf({o}))");
             }
             
             //FIXME: process optionality
