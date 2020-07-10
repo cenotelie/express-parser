@@ -138,9 +138,6 @@ namespace Express_Parser
             {
                 switch(node.Children[i].Symbol.ID)
                 {
-                    case ExpressParser.ID.VariableAbstractDecl:
-                        entity.Abstract = true;
-                        break;
                     case ExpressParser.ID.VariableSubtypeDecl:
                         if (node.Children[i].Children.Count > 0)
                         {
