@@ -31,53 +31,53 @@ namespace Express
 			/// </summary>
 			public const int VariableCommentExp = 0x0010;
 			/// <summary>
-			/// The unique identifier for variable schema_body
-			/// </summary>
-			public const int VariableSchemaBody = 0x0011;
-			/// <summary>
 			/// The unique identifier for variable use_decl
 			/// </summary>
-			public const int VariableUseDecl = 0x0012;
+			public const int VariableUseDecl = 0x0011;
 			/// <summary>
 			/// The unique identifier for variable schema_decl
 			/// </summary>
-			public const int VariableSchemaDecl = 0x0013;
+			public const int VariableSchemaDecl = 0x0012;
 			/// <summary>
 			/// The unique identifier for variable type_decl
 			/// </summary>
-			public const int VariableTypeDecl = 0x0014;
+			public const int VariableTypeDecl = 0x0013;
 			/// <summary>
 			/// The unique identifier for variable select_decl
 			/// </summary>
-			public const int VariableSelectDecl = 0x0015;
+			public const int VariableSelectDecl = 0x0014;
 			/// <summary>
 			/// The unique identifier for variable entity_decl
 			/// </summary>
-			public const int VariableEntityDecl = 0x0016;
+			public const int VariableEntityDecl = 0x0015;
 			/// <summary>
 			/// The unique identifier for variable enum_decl
 			/// </summary>
-			public const int VariableEnumDecl = 0x0017;
+			public const int VariableEnumDecl = 0x0016;
 			/// <summary>
 			/// The unique identifier for variable function_decl
 			/// </summary>
-			public const int VariableFunctionDecl = 0x0018;
+			public const int VariableFunctionDecl = 0x0017;
 			/// <summary>
 			/// The unique identifier for variable statement_exp
 			/// </summary>
-			public const int VariableStatementExp = 0x0019;
+			public const int VariableStatementExp = 0x0018;
 			/// <summary>
 			/// The unique identifier for variable local_decl
 			/// </summary>
-			public const int VariableLocalDecl = 0x001A;
+			public const int VariableLocalDecl = 0x0019;
 			/// <summary>
 			/// The unique identifier for variable if_decl
 			/// </summary>
-			public const int VariableIfDecl = 0x001B;
+			public const int VariableIfDecl = 0x001A;
 			/// <summary>
 			/// The unique identifier for variable return_statement
 			/// </summary>
-			public const int VariableReturnStatement = 0x001C;
+			public const int VariableReturnStatement = 0x001B;
+			/// <summary>
+			/// The unique identifier for variable rule_decl
+			/// </summary>
+			public const int VariableRuleDecl = 0x001C;
 			/// <summary>
 			/// The unique identifier for variable supertype_decl
 			/// </summary>
@@ -297,18 +297,18 @@ namespace Express
 		private static readonly Symbol[] variables = {
 			new Symbol(0x000F, "root"), 
 			new Symbol(0x0010, "comment_exp"), 
-			new Symbol(0x0011, "schema_body"), 
-			new Symbol(0x0012, "use_decl"), 
-			new Symbol(0x0013, "schema_decl"), 
-			new Symbol(0x0014, "type_decl"), 
-			new Symbol(0x0015, "select_decl"), 
-			new Symbol(0x0016, "entity_decl"), 
-			new Symbol(0x0017, "enum_decl"), 
-			new Symbol(0x0018, "function_decl"), 
-			new Symbol(0x0019, "statement_exp"), 
-			new Symbol(0x001A, "local_decl"), 
-			new Symbol(0x001B, "if_decl"), 
-			new Symbol(0x001C, "return_statement"), 
+			new Symbol(0x0011, "use_decl"), 
+			new Symbol(0x0012, "schema_decl"), 
+			new Symbol(0x0013, "type_decl"), 
+			new Symbol(0x0014, "select_decl"), 
+			new Symbol(0x0015, "entity_decl"), 
+			new Symbol(0x0016, "enum_decl"), 
+			new Symbol(0x0017, "function_decl"), 
+			new Symbol(0x0018, "statement_exp"), 
+			new Symbol(0x0019, "local_decl"), 
+			new Symbol(0x001A, "if_decl"), 
+			new Symbol(0x001B, "return_statement"), 
+			new Symbol(0x001C, "rule_decl"), 
 			new Symbol(0x001D, "supertype_decl"), 
 			new Symbol(0x001E, "subtype_decl"), 
 			new Symbol(0x001F, "inverse_decl"), 
@@ -362,37 +362,38 @@ namespace Express
 			new Symbol(0x004F, "literal"), 
 			new Symbol(0x0050, "numeric_lit"), 
 			new Symbol(0x0051, "__V81"), 
-			new Symbol(0x0052, "__V82"), 
-			new Symbol(0x005D, "__V93"), 
-			new Symbol(0x0061, "__V97"), 
+			new Symbol(0x0056, "__V86"), 
+			new Symbol(0x005E, "__V94"), 
 			new Symbol(0x0062, "__V98"), 
-			new Symbol(0x0066, "__V102"), 
-			new Symbol(0x0068, "__V104"), 
-			new Symbol(0x006C, "__V108"), 
-			new Symbol(0x0070, "__V112"), 
-			new Symbol(0x0073, "__V115"), 
-			new Symbol(0x0074, "__V116"), 
-			new Symbol(0x0077, "__V119"), 
+			new Symbol(0x0063, "__V99"), 
+			new Symbol(0x0067, "__V103"), 
+			new Symbol(0x0069, "__V105"), 
+			new Symbol(0x006D, "__V109"), 
+			new Symbol(0x0072, "__V114"), 
+			new Symbol(0x0075, "__V117"), 
+			new Symbol(0x0078, "__V120"), 
 			new Symbol(0x0079, "__V121"), 
-			new Symbol(0x007A, "__V122"), 
-			new Symbol(0x007C, "__V124"), 
+			new Symbol(0x007B, "__V123"), 
+			new Symbol(0x007D, "__V125"), 
 			new Symbol(0x007E, "__V126"), 
-			new Symbol(0x007F, "__V127"), 
 			new Symbol(0x0080, "__V128"), 
-			new Symbol(0x0081, "__V129"), 
-			new Symbol(0x0087, "__V135"), 
-			new Symbol(0x008A, "__V138"), 
+			new Symbol(0x0082, "__V130"), 
+			new Symbol(0x0083, "__V131"), 
+			new Symbol(0x0084, "__V132"), 
+			new Symbol(0x0085, "__V133"), 
 			new Symbol(0x008B, "__V139"), 
-			new Symbol(0x0092, "__V146"), 
-			new Symbol(0x0093, "__V147"), 
-			new Symbol(0x0094, "__V148"), 
-			new Symbol(0x009C, "__V156"), 
-			new Symbol(0x009F, "__V159"), 
-			new Symbol(0x00A2, "__V162"), 
-			new Symbol(0x00B0, "__V176"), 
-			new Symbol(0x00B2, "__V178"), 
+			new Symbol(0x008E, "__V142"), 
+			new Symbol(0x008F, "__V143"), 
+			new Symbol(0x0096, "__V150"), 
+			new Symbol(0x0097, "__V151"), 
+			new Symbol(0x0098, "__V152"), 
+			new Symbol(0x00A0, "__V160"), 
+			new Symbol(0x00A3, "__V163"), 
+			new Symbol(0x00A6, "__V166"), 
 			new Symbol(0x00B4, "__V180"), 
-			new Symbol(0x00BC, "__VAxiom") };
+			new Symbol(0x00B6, "__V182"), 
+			new Symbol(0x00B8, "__V184"), 
+			new Symbol(0x00C0, "__VAxiom") };
 		/// <summary>
 		/// The collection of virtuals matched by this parser
 		/// </summary>
@@ -427,7 +428,6 @@ namespace Express
 			public virtual void OnTerminalFunctionBody(ASTNode node) {}
 			public virtual void OnVariableRoot(ASTNode node) {}
 			public virtual void OnVariableCommentExp(ASTNode node) {}
-			public virtual void OnVariableSchemaBody(ASTNode node) {}
 			public virtual void OnVariableUseDecl(ASTNode node) {}
 			public virtual void OnVariableSchemaDecl(ASTNode node) {}
 			public virtual void OnVariableTypeDecl(ASTNode node) {}
@@ -439,6 +439,7 @@ namespace Express
 			public virtual void OnVariableLocalDecl(ASTNode node) {}
 			public virtual void OnVariableIfDecl(ASTNode node) {}
 			public virtual void OnVariableReturnStatement(ASTNode node) {}
+			public virtual void OnVariableRuleDecl(ASTNode node) {}
 			public virtual void OnVariableSupertypeDecl(ASTNode node) {}
 			public virtual void OnVariableSubtypeDecl(ASTNode node) {}
 			public virtual void OnVariableInverseDecl(ASTNode node) {}
@@ -524,18 +525,18 @@ namespace Express
 				case 0x000E: visitor.OnTerminalFunctionBody(node); break;
 				case 0x000F: visitor.OnVariableRoot(node); break;
 				case 0x0010: visitor.OnVariableCommentExp(node); break;
-				case 0x0011: visitor.OnVariableSchemaBody(node); break;
-				case 0x0012: visitor.OnVariableUseDecl(node); break;
-				case 0x0013: visitor.OnVariableSchemaDecl(node); break;
-				case 0x0014: visitor.OnVariableTypeDecl(node); break;
-				case 0x0015: visitor.OnVariableSelectDecl(node); break;
-				case 0x0016: visitor.OnVariableEntityDecl(node); break;
-				case 0x0017: visitor.OnVariableEnumDecl(node); break;
-				case 0x0018: visitor.OnVariableFunctionDecl(node); break;
-				case 0x0019: visitor.OnVariableStatementExp(node); break;
-				case 0x001A: visitor.OnVariableLocalDecl(node); break;
-				case 0x001B: visitor.OnVariableIfDecl(node); break;
-				case 0x001C: visitor.OnVariableReturnStatement(node); break;
+				case 0x0011: visitor.OnVariableUseDecl(node); break;
+				case 0x0012: visitor.OnVariableSchemaDecl(node); break;
+				case 0x0013: visitor.OnVariableTypeDecl(node); break;
+				case 0x0014: visitor.OnVariableSelectDecl(node); break;
+				case 0x0015: visitor.OnVariableEntityDecl(node); break;
+				case 0x0016: visitor.OnVariableEnumDecl(node); break;
+				case 0x0017: visitor.OnVariableFunctionDecl(node); break;
+				case 0x0018: visitor.OnVariableStatementExp(node); break;
+				case 0x0019: visitor.OnVariableLocalDecl(node); break;
+				case 0x001A: visitor.OnVariableIfDecl(node); break;
+				case 0x001B: visitor.OnVariableReturnStatement(node); break;
+				case 0x001C: visitor.OnVariableRuleDecl(node); break;
 				case 0x001D: visitor.OnVariableSupertypeDecl(node); break;
 				case 0x001E: visitor.OnVariableSubtypeDecl(node); break;
 				case 0x001F: visitor.OnVariableInverseDecl(node); break;

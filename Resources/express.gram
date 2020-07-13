@@ -22,24 +22,27 @@
 								|  ('0' | [1-9] [0-9]*) [FfDdMm] ;
 		BOOL_LITERAL	-> 'TRUE' | 'FALSE' | 'true' | 'false';
 		STRING_LITERAL		-> '\'' (.* - (.* '\'' .*)) '\'';
+		FUNCTION_BODY		-> 'FUNCTION' (.* - (.* 'END_FUNCTION' .*)) 'END_FUNCTION';
 	}
 	rules {
-		root		-> comment_exp* schema_body;
+		root		-> comment_exp* schema_decl;
 		comment_exp -> ANNOTATION;
-		schema_body -> schema_decl (comment_exp | use_decl | type_decl | entity_decl | function_decl)*;
 		use_decl	-> 'USE'! 'FROM'! IDENTIFIER ';'!;
-		schema_decl -> 'SCHEMA'! IDENTIFIER ';'!;
+		schema_decl -> 'SCHEMA'! IDENTIFIER ';'! (comment_exp | use_decl | type_decl | entity_decl | function_decl | rule_decl)* 'END_SCHEMA' ';';
 		type_decl	-> 'TYPE'! IDENTIFIER '='! (select_decl | enum_decl | type_id ) ';'! where_decl? 'END_TYPE'! ';'!;
 		select_decl	-> 'SELECT'! '('! IDENTIFIER (','! IDENTIFIER)* ')'!;
 		entity_decl	-> 'ENTITY'! IDENTIFIER 'ABSTRACT'? (subtype_decl | supertype_decl)* ';'! (prop_decl | INLINE_ANNOTATION)* derive_decl? unique_decl? inverse_decl? where_decl? 'END_ENTITY'! ';'!;
 		enum_decl	-> 'ENUMERATION'! 'OF'! '('! IDENTIFIER (','! IDENTIFIER)* ')'!;
-		function_decl	-> 'FUNCTION'! IDENTIFIER '('! (IDENTIFIER ':'! type_id (';'! IDENTIFIER ':'! type_id)*)? ')'! (':'! type_id)? ';'!
-							statement_exp*
-							'END_FUNCTION'! ';'!;
+		//TODO: parse functions only if needed
+		//function_decl	-> 'FUNCTION'! IDENTIFIER '('! (IDENTIFIER ':'! type_id (';'! IDENTIFIER ':'! type_id)*)? ')'! (':'! type_id)? ';'!
+		//					statement_exp*
+		//					'END_FUNCTION'! ';'!;
+		function_decl	-> FUNCTION_BODY ';'!;
 		statement_exp	-> local_decl | if_decl | return_statement;
 		local_decl	-> 'LOCAL'! prop_decl* 'END_LOCAL'! ';';
 		if_decl		-> 'IF'! bool_exp 'THEN'! statement_exp+ 'END_IF'! ';'!;
 		return_statement	-> 'RETURN'! '('! (function_call_exp | literal) ')'! ';' ;
+		rule_decl		-> 'RULE'! IDENTIFIER 'FOR'! '('! IDENTIFIER (','! IDENTIFIER)* ')'! ';'! where_decl 'END_RULE'! ';'!;
 		supertype_decl	-> 'SUBTYPE'! 'OF'! '('! IDENTIFIER (','! IDENTIFIER)* ')'!;
 		subtype_decl	-> 'SUPERTYPE'! ('OF'! '('! (oneof_exp | andor_exp | IDENTIFIER) ')'!)?;
 		inverse_decl	-> 'INVERSE'! INLINE_ANNOTATION* inverse_exp+;
@@ -48,7 +51,7 @@
 		derive_exp	-> attr_read_exp ':'! type_id ':='! (attr_read_exp | literal | sizeof_opd | function_call_exp) ';'! INLINE_ANNOTATION*;
 		unique_decl     -> 'UNIQUE'! INLINE_ANNOTATION* unique_exp+;
 		unique_exp      -> IDENTIFIER ':' attr_read_exp (',' attr_read_exp)* ';'! INLINE_ANNOTATION*;
-		attr_read_exp   -> 'SELF' | IDENTIFIER | ('SELF' | IDENTIFIER) (('.' | '\\') IDENTIFIER ('[' INTEGER_LITERAL_DECIMAL ']')?)+;
+		attr_read_exp   -> 'SELF' | IDENTIFIER | ('SELF' | IDENTIFIER)('[' INTEGER_LITERAL_DECIMAL ']')?(('.' | '\\') IDENTIFIER ('[' INTEGER_LITERAL_DECIMAL ']')?)+;
 		prop_decl	-> attr_read_exp ':'! optional_decl? type_id ';'!;
 		list_decl	-> 'LIST'! array_exp 'OF'! type_id;
 		list_concat_exp	-> list_concat_opd ('*'! list_concat_opd)+ | list_ext;
