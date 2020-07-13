@@ -31,7 +31,7 @@
 		schema_decl -> 'SCHEMA'! IDENTIFIER ';'! (comment_exp | use_decl | type_decl | entity_decl | function_decl | rule_decl)* 'END_SCHEMA' ';';
 		type_decl	-> 'TYPE'! IDENTIFIER '='! (select_decl | enum_decl | type_id ) ';'! where_decl? 'END_TYPE'! ';'!;
 		select_decl	-> 'SELECT'! '('! IDENTIFIER (','! IDENTIFIER)* ')'!;
-		entity_decl	-> 'ENTITY'! IDENTIFIER 'ABSTRACT'? (subtype_decl | supertype_decl)* ';'! (prop_decl | INLINE_ANNOTATION)* derive_decl? unique_decl? inverse_decl? where_decl? 'END_ENTITY'! ';'!;
+		entity_decl	-> 'ENTITY'! IDENTIFIER 'ABSTRACT'? (subtype_decl | supertype_decl)* ';'! (prop_decl | comment_exp | INLINE_ANNOTATION)* derive_decl? unique_decl? inverse_decl? where_decl? 'END_ENTITY'! ';'!;
 		enum_decl	-> 'ENUMERATION'! 'OF'! '('! IDENTIFIER (','! IDENTIFIER)* ')'!;
 		//TODO: parse functions only if needed
 		//function_decl	-> 'FUNCTION'! IDENTIFIER '('! (IDENTIFIER ':'! type_id (';'! IDENTIFIER ':'! type_id)*)? ')'! (':'! type_id)? ';'!
