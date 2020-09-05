@@ -15,7 +15,7 @@ namespace Express_Parser
 
         private readonly Schema schema;
 
-        public ExpressModelGenerator(ASTNode root, string baseName, string outputFile, bool debug)
+        public ExpressModelGenerator(ASTNode root, string baseName, string inputFile, string outputFile, bool debug)
         {
             this.root = root;
             this.debug = debug;

@@ -98,6 +98,7 @@ namespace Express_Model
     {
         public void GenerateOWL(TextWriter writer)
         {
+            if (types.Count() == 0) return;
             writer.WriteLine($"EquivalentClasses(:{Name} ObjectUnionOf(");
             foreach (string type in types)
             {

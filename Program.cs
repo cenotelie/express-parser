@@ -12,23 +12,50 @@ namespace Express_Parser
         {
             if (args.Length == 0)
             {
-                Console.WriteLine("Usage: express2owl base_iri input_file [debug]");
-                return;
+                Console.WriteLine("Usage: express2owl base_iri input_directory [debug]");
+                Environment.Exit(-1);
             }
-            string inputFile = args[1];
-            string text = File.ReadAllText(inputFile);
-            ExpressLexer lexer = new ExpressLexer(text);
-            ExpressParser parser = new ExpressParser(lexer);
-            ParseResult res = parser.Parse();
-            string outputFile = inputFile.Replace(".exp", ".owl");
-            bool debug = false;
-            if (args.Length == 3)
+            string dir = args[1];
+            FileAttributes att = File.GetAttributes(dir);
+            if (! Directory.Exists(dir))
             {
-                debug = (args[2].Equals("debug")) ? true : false;
+                Environment.Exit(-1);
             }
-            ExpressModelGenerator generator = new ExpressModelGenerator(res.Root, inputFile, outputFile, debug);
-            generator.GenerateSchema();
-            generator.GenerateOWl();
+            ExpressModelGenerator generator;
+            int errors = 0;
+            int successes = 0;
+            foreach (string inputFile in Directory.GetFiles(dir))
+            {
+                if (!inputFile.EndsWith(".exp")) continue;
+                string text = File.ReadAllText(inputFile);
+                ExpressLexer lexer = new ExpressLexer(text);
+                ExpressParser parser = new ExpressParser(lexer);
+                ParseResult res = parser.Parse();
+                if (res.Errors.Count > 0)
+                {
+                    Console.WriteLine($"[ERROR] Failed Processing {inputFile}");
+                    foreach(ParseError err in res.Errors)
+                    {
+                        Console.WriteLine($"***** {err.Message}");
+                    }
+                    errors++;
+                    continue;
+                }
+                string outputFile = inputFile.Replace(".exp", ".owl");
+                bool debug = false;
+                if (args.Length == 3)
+                {
+                    debug = (args[2].Equals("debug")) ? true : false;
+                }
+                generator = new ExpressModelGenerator(res.Root, args[0], inputFile, outputFile, debug);
+                generator.GenerateSchema();
+                generator.GenerateOWl();
+                Console.WriteLine($"[INFO] Successfully Processed {inputFile}");
+                successes++;
+            }
+            Console.WriteLine($"[INFO] {errors} errors, {successes} successes");
+            Console.ReadKey();
+            Environment.Exit(0);
         }
     }
 }

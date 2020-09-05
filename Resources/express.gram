@@ -23,16 +23,22 @@
 		BOOL_LITERAL	-> 'TRUE' | 'FALSE' | 'true' | 'false';
 		STRING_LITERAL		-> '\'' (.* - (.* '\'' .*)) '\'';
 		FUNCTION_BODY		-> 'FUNCTION' (.* - (.* 'END_FUNCTION' .*)) 'END_FUNCTION';
+		CONSTANT_BODY		-> 'CONSTANT' (.* - (.* 'END_CONSTANT' .*)) 'END_CONSTANT';
+		RULE_BODY	-> 'RULE' (.* - (.* 'END_RULE' .*)) 'END_RULE';
 	}
 	rules {
-		root		-> comment_exp* schema_decl;
+		root		-> comment_exp* schema_decl comment_exp*;
 		comment_exp -> ANNOTATION;
-		use_decl	-> 'USE'! 'FROM'! IDENTIFIER ';'!;
-		schema_decl -> 'SCHEMA'! IDENTIFIER ';'! (comment_exp | use_decl | type_decl | entity_decl | function_decl | rule_decl)* 'END_SCHEMA' ';';
-		type_decl	-> 'TYPE'! IDENTIFIER '='! (select_decl | enum_decl | type_id ) ';'! where_decl? 'END_TYPE'! ';'!;
-		select_decl	-> 'SELECT'! '('! IDENTIFIER (','! IDENTIFIER)* ')'!;
+		use_decl	-> 'USE'! 'FROM'! IDENTIFIER INLINE_ANNOTATION? ('('! IDENTIFIER (','! INLINE_ANNOTATION? IDENTIFIER)* ')'!)?';'!; //TODO: take into account parameters
+		reference_decl	-> 'REFERENCE'! 'FROM'! IDENTIFIER INLINE_ANNOTATION? ('('! IDENTIFIER (','! INLINE_ANNOTATION? IDENTIFIER)* ')'!)?';'!; //TODO: process references
+		constant_decl	-> CONSTANT_BODY ';'! ;
+		schema_decl -> 'SCHEMA'! IDENTIFIER ';'! (comment_exp | use_decl | reference_decl | type_decl | entity_decl | function_decl | rule_decl | subtype_const_decl | constant_decl | INLINE_ANNOTATION)* 'END_SCHEMA' ';' INLINE_ANNOTATION?;
+		type_decl	-> 'TYPE'! IDENTIFIER '='! 'EXTENSIBLE'? 'GENERIC_ENTITY'? (select_decl | enum_decl | type_id) based_on_exp? ';'! INLINE_ANNOTATION? where_decl? 'END_TYPE'! ';'!;
+		based_on_exp	-> 'BASED_ON'! IDENTIFIER ('WITH'! '('! IDENTIFIER (','! IDENTIFIER)* ')'!)? ; //TODO: process based expression
+		select_decl	-> 'SELECT'! ('('! IDENTIFIER (','! IDENTIFIER)* ')'!)?;
 		entity_decl	-> 'ENTITY'! IDENTIFIER 'ABSTRACT'? (subtype_decl | supertype_decl)* ';'! (prop_decl | comment_exp | INLINE_ANNOTATION)* derive_decl? unique_decl? inverse_decl? where_decl? 'END_ENTITY'! ';'!;
 		enum_decl	-> 'ENUMERATION'! 'OF'! '('! IDENTIFIER (','! IDENTIFIER)* ')'!;
+		subtype_const_decl	-> 'SUBTYPE_CONSTRAINT'! IDENTIFIER 'FOR'! IDENTIFIER ';'! ('ABSTRACT'? 'SUPERTYPE'? ';'!)? (oneof_exp | andor_exp) ';'! 'END_SUBTYPE_CONSTRAINT'! ';'! ; //TODO: process subtype constraints
 		//TODO: parse functions only if needed
 		//function_decl	-> 'FUNCTION'! IDENTIFIER '('! (IDENTIFIER ':'! type_id (';'! IDENTIFIER ':'! type_id)*)? ')'! (':'! type_id)? ';'!
 		//					statement_exp*
@@ -42,7 +48,7 @@
 		local_decl	-> 'LOCAL'! prop_decl* 'END_LOCAL'! ';';
 		if_decl		-> 'IF'! bool_exp 'THEN'! statement_exp+ 'END_IF'! ';'!;
 		return_statement	-> 'RETURN'! '('! (function_call_exp | literal) ')'! ';' ;
-		rule_decl		-> 'RULE'! IDENTIFIER 'FOR'! '('! IDENTIFIER (','! IDENTIFIER)* ')'! ';'! where_decl 'END_RULE'! ';'!;
+		rule_decl		-> RULE_BODY ';'! ;
 		supertype_decl	-> 'SUBTYPE'! 'OF'! '('! IDENTIFIER (','! IDENTIFIER)* ')'!;
 		subtype_decl	-> 'SUPERTYPE'! ('OF'! '('! (oneof_exp | andor_exp | IDENTIFIER) ')'!)?;
 		inverse_decl	-> 'INVERSE'! INLINE_ANNOTATION* inverse_exp+;
@@ -51,8 +57,9 @@
 		derive_exp	-> attr_read_exp ':'! type_id ':='! (attr_read_exp | literal | sizeof_opd | function_call_exp) ';'! INLINE_ANNOTATION*;
 		unique_decl     -> 'UNIQUE'! INLINE_ANNOTATION* unique_exp+;
 		unique_exp      -> IDENTIFIER ':' attr_read_exp (',' attr_read_exp)* ';'! INLINE_ANNOTATION*;
-		attr_read_exp   -> 'SELF' | IDENTIFIER | ('SELF' | IDENTIFIER)('[' INTEGER_LITERAL_DECIMAL ']')?(('.' | '\\') IDENTIFIER ('[' INTEGER_LITERAL_DECIMAL ']')?)+;
-		prop_decl	-> attr_read_exp ':'! optional_decl? type_id ';'!;
+		attr_read_exp   -> 'SELF' | IDENTIFIER | ('SELF' | function_call_exp | IDENTIFIER)('[' INTEGER_LITERAL_DECIMAL ']')?(('.' | '\\') IDENTIFIER ('[' INTEGER_LITERAL_DECIMAL ']')?)+;
+		prop_decl	-> attr_read_exp renamed_exp? ':'! optional_decl? type_id ';'!; //TODO: process renamed construction
+		renamed_exp	-> 'RENAMED'! IDENTIFIER;
 		list_decl	-> 'LIST'! array_exp 'OF'! type_id;
 		list_concat_exp	-> list_concat_opd ('*'! list_concat_opd)+ | list_ext;
 		list_concat_opd	-> comp_opd | function_call_exp;
@@ -74,8 +81,8 @@
 		limits_exp	-> '{'! numeric_lit lt_comp_op attr_read_exp lt_comp_op numeric_lit '}'!;
 		comp_exp	-> comp_opd comp_op comp_opd;
 		comp_opd	-> access_opd | typeof_opd | sizeof_opd | usedin_opd | classof_opd | query_exp | list_ext | '('! comp_opd ')'!;
-		function_call_exp	-> IDENTIFIER '(' function_params_exp (','! function_params_exp)* ')';
-		function_params_exp	-> access_opd | list_ext | list_append_exp;
+		function_call_exp	-> IDENTIFIER '('! function_params_exp (','! function_params_exp)* ')'!;
+		function_params_exp	-> access_opd | list_ext | list_append_exp | '?';
 		typeof_opd	-> 'TYPEOF'! '('! access_opd ')'!;
 		usedin_opd	-> 'USEDIN'! '('! access_opd (','! access_opd)* ')'!;
 		access_opd	-> literal | str_concat_exp | attr_read_exp ;
