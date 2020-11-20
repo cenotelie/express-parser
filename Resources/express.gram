@@ -17,9 +17,9 @@
 		INLINE_ANNOTATION		-> '--' (.* - (.* NEW_LINE .*)) NEW_LINE;
 		INTEGER_LITERAL_DECIMAL -> ('0' | [1-9] [0-9]*) ([Uu] [Ll]? | [Ll] [Uu]? )? ;
 		INTEGER_LITERAL_HEXA	-> '0' [xX] [a-fA-F0-9]+ ([Uu] [Ll]? | [Ll] [Uu]? )? ;
-		REAL_LITERAL			-> ('0' | [1-9] [0-9]*)? '.' ('0' | [1-9] [0-9]*) ([eE] ('+'|'-')? ('0' | [1-9] [0-9]*))? [FfDdMm]?
-								|  ('0' | [1-9] [0-9]*) ([eE] ('+'|'-')? ('0' | [1-9] [0-9]*)) [FfDdMm]?
-								|  ('0' | [1-9] [0-9]*) [FfDdMm] ;
+		REAL_LITERAL			-> ('0' | [0-9]+)? '.' ('0' | [0-9]+) ([eE] ('+'|'-')? ('0' | [1-9] [0-9]*))? [FfDdMm]?
+								|  ('0' | [0-9]+) ([eE] ('+'|'-')? ('0' | [1-9] [0-9]*)) [FfDdMm]?
+								|  ('0' | [0-9]+) [FfDdMm] ;
 		BOOL_LITERAL	-> 'TRUE' | 'FALSE' | 'true' | 'false';
 		STRING_LITERAL		-> '\'' (.* - (.* '\'' .*)) '\'';
 		FUNCTION_BODY		-> 'FUNCTION' (.* - (.* 'END_FUNCTION' .*)) 'END_FUNCTION';
@@ -95,7 +95,7 @@
 		lt_comp_op	-> '<' | '<=' | '<*'; //liter or equal comparison
 		gt_comp_op	-> '>=' | '>' | '>*'; //greater or equal comparison
 		oneof_exp	-> 'ONEOF' '('! IDENTIFIER (','! IDENTIFIER)+ ')'!;
-		andor_exp	-> '('! oneof_exp ')'! ('ANDOR'! '('! oneof_exp ')'!)+;
+		andor_exp	-> oneof_exp ('ANDOR'! oneof_exp)+;
 		str_concat_exp	-> STRING_LITERAL ('+'! STRING_LITERAL)+;
 		list_append_exp	-> IDENTIFIER '+'! list_ext;
 		type_id		-> IDENTIFIER | pt_keyword | list_decl | set_decl | array_decl | bag_decl;
