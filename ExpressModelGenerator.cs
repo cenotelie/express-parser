@@ -1,7 +1,5 @@
 ﻿using Hime.Redist;
-using System;
 using System.Collections.Generic;
-using System.IO;
 using Express_Model;
 using Express;
 
@@ -9,30 +7,19 @@ namespace Express_Parser
 {
     class ExpressModelGenerator
     {
-        private readonly TextWriter writer;
         private readonly ASTNode root;
-        private readonly bool debug;
-
         private readonly Schema schema;
 
-        public ExpressModelGenerator(ASTNode root, string baseName, string inputFile, string outputFile, bool debug)
+        public ExpressModelGenerator(ASTNode root, string baseName)
         {
             this.root = root;
-            this.debug = debug;
-            if (debug) writer = Console.Out;
-            else writer = new StreamWriter(outputFile);
             schema = new Schema(baseName);
         }
 
-        public void GenerateSchema()
+        public Schema GenerateSchema()
         {
             ProcessNode(root);
-        }
-        public void GenerateOWl()
-        {
-            schema.GenerateOWL(writer);
-            writer.Close();
-            if (debug) Console.ReadKey();
+            return schema;
         }
         private void ProcessNode(ASTNode node)
         {

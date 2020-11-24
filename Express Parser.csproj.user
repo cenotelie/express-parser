@@ -13,7 +13,7 @@
     <VerifyUploadedFiles>false</VerifyUploadedFiles>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
-    <StartArguments>http://www.cenotelie.fr/ontologies/step C:\Users\aliko\Documents\Collins\Standards</StartArguments>
+    <StartArguments>http://www.cenotelie.fr/ontologies/step C:\Users\aliko\Documents\Collins\Standards false true</StartArguments>
   </PropertyGroup>
   <PropertyGroup>
     <EnableSecurityDebugging>false</EnableSecurityDebugging>

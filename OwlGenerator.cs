@@ -7,7 +7,7 @@ namespace Express_Model
 {
     interface IOwlGeneration
     {
-        void GenerateOWL(TextWriter writer);
+        void GenerateOWL(TextWriter writer, bool single);
     }
     public partial class Schema : IOwlGeneration
     {
@@ -33,18 +33,21 @@ namespace Express_Model
                     return $":{key}";
             }
         }
-        public void GenerateOWL(TextWriter writer)
+        public void GenerateOWL(TextWriter writer, bool single)
         {
-            writer.WriteLine("Prefix(owl:=<http://www.w3.org/2002/07/owl#>)");
-            writer.WriteLine("Prefix(rdf:=<http://www.w3.org/1999/02/22-rdf-syntax-ns#>)");
-            writer.WriteLine("Prefix(rdfs:=<http://www.w3.org/2000/01/rdf-schema#>)");
-            writer.WriteLine("Prefix(xml:=<http://www.w3.org/XML/1998/namespace>)");
-            writer.WriteLine("Prefix(xsd:=<http://www.w3.org/2001/XMLSchema#>)");
-            writer.WriteLine($"Prefix(:=<{schemaBase}#>)\n");
-            writer.WriteLine($"Ontology(<{schemaBase}/{Name}>");
-            foreach (string import in imports)
+            if (!single)
             {
-                writer.WriteLine($"Import (<{schemaBase}/{import}>)");
+                writer.WriteLine("Prefix(owl:=<http://www.w3.org/2002/07/owl#>)");
+                writer.WriteLine("Prefix(rdf:=<http://www.w3.org/1999/02/22-rdf-syntax-ns#>)");
+                writer.WriteLine("Prefix(rdfs:=<http://www.w3.org/2000/01/rdf-schema#>)");
+                writer.WriteLine("Prefix(xml:=<http://www.w3.org/XML/1998/namespace>)");
+                writer.WriteLine("Prefix(xsd:=<http://www.w3.org/2001/XMLSchema#>)");
+                writer.WriteLine($"Prefix(:=<{schemaBase}#>)\n");
+                writer.WriteLine($"Ontology(<{schemaBase}/{Name}>");
+                foreach (string import in imports)
+                {
+                    writer.WriteLine($"Import (<{schemaBase}/{import}>)");
+                }
             }
             foreach (KeyValuePair<string, string> e in defTypes)
             {
@@ -59,28 +62,31 @@ namespace Express_Model
             }
             foreach (SelectType type in selectTypes)
             {
-                type.GenerateOWL(writer);
+                type.GenerateOWL(writer, false);
             }
             List<string> defList = new List<string>(defTypes.Keys);
             foreach (Enumeration enumeration in enumerations)
             {
-                enumeration.GenerateOWL(writer);
+                enumeration.GenerateOWL(writer, false);
             }
             foreach (Entity entity in entities)
             {
                 entity.TypeDef = defList;
-                entity.GenerateOWL(writer);
+                entity.GenerateOWL(writer, false);
             }
             foreach (Property prop in properties)
             {
-                prop.GenerateOWL(writer);
+                prop.GenerateOWL(writer, false);
             }
-            writer.WriteLine(")");
+            if (!single)
+            {
+                writer.WriteLine(")");
+            }
         }
     }
     public partial class Enumeration : IOwlGeneration
     {
-        public void GenerateOWL(TextWriter writer)
+        public void GenerateOWL(TextWriter writer, bool single)
         {
             writer.WriteLine($"Declaration(Class(:{Name}))");
             writer.WriteLine($"AnnotationAssertion(rdfs:label :{Name} \"{Name}\"^^xsd:string)");
@@ -96,7 +102,7 @@ namespace Express_Model
     }
     public partial class SelectType : IOwlGeneration
     {
-        public void GenerateOWL(TextWriter writer)
+        public void GenerateOWL(TextWriter writer, bool single)
         {
             if (types.Count() == 0) return;
             writer.WriteLine($"EquivalentClasses(:{Name} ObjectUnionOf(");
@@ -110,7 +116,7 @@ namespace Express_Model
     }
     public partial class Entity : IOwlGeneration
     {
-        public void GenerateOWL(TextWriter writer)
+        public void GenerateOWL(TextWriter writer, bool single)
         {
             writer.WriteLine($"Declaration(Class(:{Name}))");
             writer.WriteLine($"AnnotationAssertion(rdfs:label :{Name} \"{Name}\"^^xsd:string)");
@@ -130,7 +136,7 @@ namespace Express_Model
     }
     public partial class Property : IOwlGeneration
     {
-        public void GenerateOWL(TextWriter writer)
+        public void GenerateOWL(TextWriter writer, bool single)
         {
             bool isPrimitiveObjects = false;
             foreach(string s in objects)
