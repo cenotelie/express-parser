@@ -67,8 +67,8 @@
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Hime.Redist, Version=3.4.0.0, Culture=neutral, PublicKeyToken=984dd3a5d55ca89c, processorArchitecture=MSIL">
-      <HintPath>packages\Hime.Redist.3.4.0\lib\net20\Hime.Redist.dll</HintPath>
+    <Reference Include="Hime.Redist, Version=3.5.1.0, Culture=neutral, PublicKeyToken=984dd3a5d55ca89c, processorArchitecture=MSIL">
+      <HintPath>packages\Hime.Redist.3.5.1\lib\net20\Hime.Redist.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -94,9 +94,9 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="Express Parser_TemporaryKey.pfx" />
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config" />
     <None Include="Properties\app.manifest" />
     <None Include="Resources\express.gram" />
   </ItemGroup>
